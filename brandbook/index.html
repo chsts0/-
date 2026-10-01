@@ -1,0 +1,1286 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Брендбук за вечер</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a quiet two-pane workbench. The form sits on the left like a spec sheet, the brandbook pages stack on the right like a print proof. The chrome stays monochrome so only the brand brings colour. */
+:root{
+  --bg:#ECEEF1;
+  --panel:#FFFFFF;
+  --field:#F4F5F7;
+  --ink:#15171A;
+  --muted:#5D636B;
+  --line:#D7DBE0;
+  --accent:#15171A;
+  --on-accent:#FFFFFF;
+  --focus:#3D5AFE;
+  --warn:#B42318;
+  --font-ui:"Golos Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101215;--panel:#191C20;--field:#21252A;--ink:#ECEEF0;--muted:#9AA1A9;--line:#2B3036;--accent:#ECEEF0;--on-accent:#111316;--focus:#93A3FF;--warn:#FF8A80;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101215;--panel:#191C20;--field:#21252A;--ink:#ECEEF0;--muted:#9AA1A9;--line:#2B3036;--accent:#ECEEF0;--on-accent:#111316;--focus:#93A3FF;--warn:#FF8A80;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:15px/1.45 var(--font-ui);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1720px;margin:0 auto;padding-inline:24px;padding-block:20px 64px}
+@media (max-width:640px){.wrap{padding-inline:16px}}
+
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 24px;padding-block:8px 20px}
+.top h1{margin:0;font-size:26px;line-height:1.1;font-weight:600;letter-spacing:-0.02em;text-wrap:balance}
+.top p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:500;font-size:14px;line-height:1;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.small{padding:7px 10px;font-size:13px;border-radius:8px}
+.btn.ghost{background:transparent}
+.btn.armed{border-color:var(--warn);color:var(--warn)}
+.btn[disabled]{opacity:.55;cursor:progress}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:960px){.app{grid-template-columns:minmax(0,1fr)}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);max-height:calc(100vh - 32px);overflow:auto}
+@media (max-width:960px){.panel{position:static;max-height:none}}
+.panel details{border-top:1px solid var(--line);padding:14px 18px}
+.panel details:first-child{border-top:0}
+.panel summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:15px}
+.panel summary::-webkit-details-marker{display:none}
+.panel summary::after{content:"+";color:var(--muted);font-weight:400;font-size:18px;line-height:1}
+.panel details[open] summary::after{content:"−"}
+.fields{display:grid;gap:12px;margin-top:14px}
+.f{display:grid;gap:6px;min-width:0}
+.f > span,.lab{font-size:12.5px;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+.hint.warn{color:var(--warn)}
+input[type="text"],input[type="email"],textarea,select{width:100%;min-width:0;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:14px;line-height:1.35}
+textarea{resize:vertical;min-height:62px}
+select{appearance:auto}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.row3{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:10px}
+.color-row{display:grid;grid-template-columns:40px 96px minmax(0,1fr);gap:8px;align-items:center}
+.color-row input[type="color"]{width:40px;height:38px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--field);cursor:pointer}
+.color-row input.hex{font-family:var(--font-mono);font-size:13px;text-transform:uppercase}
+.marks{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.marks label{position:relative;display:grid;place-items:center;aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--field);cursor:pointer}
+.marks input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.marks svg{width:56%;height:56%}
+.marks label:has(input:checked){border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.marks label:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:2px}
+.file{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.file input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.pair{display:grid;gap:6px;padding-top:4px}
+.pair + .pair{border-top:1px dashed var(--line);padding-top:12px}
+
+.pages{display:grid;gap:30px;min-width:0}
+.note{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:14px}
+.note b{font-weight:600}
+.toc-nav{display:flex;flex-wrap:wrap;gap:6px}
+.toc-nav a{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.toc-nav a:hover{color:var(--ink);border-color:var(--muted)}
+.page-card{display:grid;gap:10px;min-width:0;scroll-margin-top:16px}
+.page-head{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.page-head h2{margin:0;font-size:15px;font-weight:600}
+.page-head h2 span{font-family:var(--font-mono);font-weight:400;color:var(--muted);margin-right:8px;font-size:13px}
+.page-acts{display:flex;flex-wrap:wrap;gap:6px}
+.sheet{border-radius:6px;overflow:hidden;line-height:0;box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08);background:var(--panel)}
+.sheet svg{display:block;width:100%;height:auto}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translate(-50%,20px);background:var(--accent);color:var(--on-accent);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion: reduce){.toast{transition:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Брендбук за вечер</h1>
+      <p>Заполни поля, и брендбук на 14 страниц 16:9 соберётся сам. Каждую страницу можно скачать в PNG или забрать в Фигму как SVG, а весь брендбук выгрузить одним PDF.</p>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btn-pdf" type="button">Скачать PDF</button>
+      <button class="btn" id="btn-zip" type="button">PNG, SVG и токены в .zip</button>
+      <button class="btn ghost" id="btn-reset" type="button">Сбросить к примеру</button>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="panel" aria-label="Данные бренда">
+      <details open>
+        <summary>Бренд</summary>
+        <div class="fields">
+          <label class="f"><span>Название</span><input type="text" id="f-name" data-k="name"></label>
+          <label class="f"><span>Слоган, одна фраза</span><input type="text" id="f-slogan" data-k="slogan"></label>
+          <label class="f"><span>Чем занимается бренд</span><textarea id="f-about" data-k="about" rows="2"></textarea></label>
+          <div class="row2">
+            <label class="f"><span>Год</span><input type="text" id="f-year" data-k="year"></label>
+            <label class="f"><span>Автор брендбука</span><input type="text" id="f-author" data-k="author"></label>
+          </div>
+          <label class="f"><span>Контакт для вопросов по бренду</span><input type="text" id="f-contact" data-k="contact"></label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Логотип</summary>
+        <div class="fields">
+          <div class="f">
+            <span class="lab" id="marks-lab">Знак, если своего логотипа пока нет</span>
+            <div class="marks" id="marks" role="radiogroup" aria-labelledby="marks-lab"></div>
+          </div>
+          <label class="f"><span>Надпись в логотипе</span><input type="text" id="f-word" data-k="word"></label>
+          <div class="f">
+            <span class="lab">Или загрузи готовый логотип</span>
+            <div class="file">
+              <label class="btn small" for="f-logo">Выбрать SVG или PNG</label>
+              <input type="file" id="f-logo" accept=".svg,image/svg+xml,image/png,image/webp">
+              <button class="btn small ghost" type="button" id="btn-logo-clear" hidden>Убрать</button>
+            </div>
+            <p class="hint" id="logo-status">SVG лучше: из него получатся чистые версии в один цвет.</p>
+          </div>
+          <label class="f"><span>Или вставь код SVG</span><textarea id="f-svgcode" rows="2" placeholder="&lt;svg ...&gt;...&lt;/svg&gt;"></textarea></label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Цвета</summary>
+        <div class="fields" id="color-fields"></div>
+        <p class="hint" style="margin-top:10px">Названия подбираются сами. Впиши своё, если хочется.</p>
+      </details>
+
+      <details>
+        <summary>Шрифты</summary>
+        <div class="fields">
+          <div class="row3">
+            <label class="f"><span>Заголовки</span><select id="f-head-family"></select></label>
+            <label class="f"><span>Насыщенность</span><select id="f-head-weight"></select></label>
+          </div>
+          <div class="row3">
+            <label class="f"><span>Текст</span><select id="f-body-family"></select></label>
+            <label class="f"><span>Насыщенность</span><select id="f-body-weight"></select></label>
+          </div>
+          <div class="f">
+            <span class="lab">Фирменный шрифт файлом</span>
+            <div class="file">
+              <label class="btn small" for="f-font">Загрузить TTF, OTF или WOFF</label>
+              <input type="file" id="f-font" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2">
+            </div>
+            <p class="hint">Появится в обоих списках. После перезагрузки страницы файл нужно выбрать заново.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Голос бренда</summary>
+        <div class="fields">
+          <label class="f"><span>Как говорит бренд</span><textarea id="f-principle" data-k="principle" rows="3"></textarea></label>
+          <div id="voice-fields"></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Визитка</summary>
+        <div class="fields">
+          <div class="row2">
+            <label class="f"><span>Имя</span><input type="text" id="f-person" data-k="person"></label>
+            <label class="f"><span>Должность</span><input type="text" id="f-role" data-k="role"></label>
+          </div>
+        </div>
+      </details>
+    </aside>
+
+    <main class="pages" id="pages">
+      <div class="note" id="note">
+        <span><b>Сейчас открыт пример.</b> Бренд «Ровно» выдуман, впиши свой.</span>
+        <nav class="toc-nav" id="toc-nav" aria-label="Страницы"></nav>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const W = 1600, H = 900, M = 80;
+
+/* ---------- typography helpers ---------- */
+const SHORT = /(^|[\s«„(])(в|во|на|для|и|с|со|к|ко|о|об|у|от|до|по|за|из|не|ни|а|но|без|при|про|над|под|что|как|это|же|ли|бы)\s+/gi;
+function nb(s) {
+  if (!s) return '';
+  let p;
+  do { p = s; s = s.replace(SHORT, (m, a, b) => a + b + ' '); } while (s !== p);
+  return s.replace(/(\d)\s(?=\d{3}(\D|$))/g, '$1 ').replace(/(\d)\s(₽|%|мм|px|pt)/g, '$1 $2');
+}
+const pad = (n) => String(n).padStart(2, '0');
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const rn = (v) => Math.round(v * 100) / 100;
+
+/* ---------- colour ---------- */
+const clamp01 = (x) => Math.min(1, Math.max(0, x));
+function hexOk(h) { return /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(h).trim()); }
+function normHex(h) { h = String(h).trim().replace('#', ''); if (h.length === 3) h = h.split('').map((c) => c + c).join(''); return '#' + h.toUpperCase(); }
+function hexToRgb(h) { const n = parseInt(normHex(h).slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function rgbToHex(r, g, b) { return '#' + [r, g, b].map((v) => Math.round(Math.min(255, Math.max(0, v))).toString(16).padStart(2, '0')).join('').toUpperCase(); }
+const s2l = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+const l2s = (c) => 255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
+function rgbToOklab(r, g, b) {
+  const R = s2l(r), G = s2l(g), B = s2l(b);
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s, 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s];
+}
+function oklabToLin(L, a, b) {
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3, m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3, s = (L - 0.0894841775 * a - 1.2914855480 * b) ** 3;
+  return [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s];
+}
+const linToHex = (lin) => rgbToHex(...lin.map((v) => l2s(clamp01(v))));
+function hexToOklch(hex) { const [L, a, b] = rgbToOklab(...hexToRgb(hex)); return { L, C: Math.hypot(a, b), h: (Math.atan2(b, a) * 180 / Math.PI + 360) % 360 }; }
+const inGamut = (lin) => lin.every((v) => v >= -1e-4 && v <= 1 + 1e-4);
+function oklchToHex(L, C, h) {
+  const hr = h * Math.PI / 180;
+  let lin = oklabToLin(L, C * Math.cos(hr), C * Math.sin(hr));
+  if (!inGamut(lin)) {
+    let lo = 0, hi = C;
+    for (let i = 0; i < 24; i++) { const mid = (lo + hi) / 2; if (inGamut(oklabToLin(L, mid * Math.cos(hr), mid * Math.sin(hr)))) lo = mid; else hi = mid; }
+    lin = oklabToLin(L, lo * Math.cos(hr), lo * Math.sin(hr));
+  }
+  return linToHex(lin);
+}
+function lum(hex) { const [r, g, b] = hexToRgb(hex).map(s2l); return 0.2126 * r + 0.7152 * g + 0.0722 * b; }
+function contrast(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+function mixHex(a, b, t) {
+  const A = rgbToOklab(...hexToRgb(a)), B = rgbToOklab(...hexToRgb(b));
+  return linToHex(oklabToLin(A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t));
+}
+function cmyk(hex) {
+  const [r, g, b] = hexToRgb(hex).map((v) => v / 255);
+  const k = 1 - Math.max(r, g, b);
+  if (k >= 0.999) return [0, 0, 0, 100];
+  return [(1 - r - k) / (1 - k), (1 - g - k) / (1 - k), (1 - b - k) / (1 - k), k].map((v) => Math.round(v * 100));
+}
+const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+const LT = [0.975, 0.945, 0.895, 0.825, 0.745, 0.665, 0.585, 0.505, 0.425, 0.345, 0.27];
+const CM = [0.10, 0.20, 0.40, 0.62, 0.82, 0.95, 1.0, 0.95, 0.85, 0.70, 0.55];
+function makeScale(hex) {
+  const { L, C, h } = hexToOklch(hex);
+  let ai = 0, best = 9;
+  LT.forEach((l, i) => { const d = Math.abs(l - L); if (d < best) { best = d; ai = i; } });
+  return { steps: LT.map((l, i) => (i === ai ? normHex(hex) : oklchToHex(l, (C * CM[i]) / CM[ai], h))), anchor: ai };
+}
+const onColor = (bg, dark) => (contrast('#FFFFFF', bg) >= contrast(dark, bg) ? '#FFFFFF' : dark);
+
+const NAMES = [['Янтарь','#C98A2E'],['Мёд','#D9A441'],['Охра','#C08A3E'],['Медь','#B87333'],['Корица','#8B5A2B'],['Каштан','#6B3E26'],['Кофе','#4B3621'],['Шоколад','#3B2418'],['Орех','#8E6B3E'],['Табак','#6F5434'],['Ржавчина','#9C4A1E'],['Терракота','#B5583A'],['Песок','#C8B08A'],['Пшеница','#D8C08A'],['Золото','#C9A227'],['Горчица','#B8962E'],['Олива','#7A7A3A'],['Мох','#5E6B3A'],['Хаки','#7D7A55'],['Шалфей','#8FA38A'],['Полынь','#9AA58E'],['Хвоя','#2F4F3A'],['Изумруд','#2E7D5B'],['Малахит','#1F6E5A'],['Нефрит','#5E9C83'],['Мята','#9CC9B4'],['Бирюза','#3A9A9A'],['Морская волна','#2F7F86'],['Петроль','#1F5A66'],['Лёд','#CFE0E8'],['Небо','#8DB4D6'],['Лазурь','#3C7FC0'],['Василёк','#4A6FB5'],['Сапфир','#2A4A8A'],['Индиго','#3A3F7A'],['Ультрамарин','#3D55E8'],['Кобальт','#1F4AA8'],['Сталь','#6E7F8E'],['Пепел','#A8ABAD'],['Дым','#8C8F93'],['Графит','#2E3236'],['Асфальт','#55595C'],['Серебро','#BFC4C8'],['Туман','#E3E6EA'],['Сизый','#7A8FA0'],['Сирень','#A48BBF'],['Лаванда','#B3A6D1'],['Фиалка','#6B4C9A'],['Слива','#5B3A5E'],['Баклажан','#3D2340'],['Вишня','#7A1F2E'],['Гранат','#8E2433'],['Малина','#B5294E'],['Фуксия','#C23B8C'],['Коралл','#E07A5F'],['Персик','#F2B48C'],['Абрикос','#F4A261'],['Мандарин','#F28C28'],['Пудра','#E3C4BC'],['Роза','#D98A9B'],['Кость','#E8DFCF'],['Молоко','#F3EEE4'],['Сливки','#F1E4C6'],['Лён','#DCD0B5'],['Глина','#A27056'],['Кирпич','#9C4A3A'],['Шафран','#E3A92B'],['Лимон','#E8D44D'],['Липа','#C9C66A'],['Фисташка','#A8C686'],['Салат','#8CC152'],['Трава','#4F8A3A'],['Болото','#4E5634'],['Уголь','#1B1C1E'],['Чернила','#1C1F2A'],['Ночь','#14182A'],['Снег','#F8F9FA'],['Мел','#EDEDEA'],['Красный','#D7263D'],['Алый','#E5383B'],['Томат','#E8573F'],['Синий','#2443B8'],['Голубой','#9BC3E6'],['Зелёный','#2E9E5B'],['Жёлтый','#F5C518'],['Оранжевый','#F07A1A'],['Фиолетовый','#7B3FB5']];
+const NAMES_LAB = NAMES.map(([n, h]) => [n, rgbToOklab(...hexToRgb(h))]);
+function colorName(hex) {
+  const p = rgbToOklab(...hexToRgb(hex));
+  let best = '', bd = 1e9;
+  for (const [n, q] of NAMES_LAB) { const d = (p[0] - q[0]) ** 2 + ((p[1] - q[1]) * 1.4) ** 2 + ((p[2] - q[2]) * 1.4) ** 2; if (d < bd) { bd = d; best = n; } }
+  return best;
+}
+
+/* ---------- fonts ---------- */
+const FONT_LIST = [
+  ['Unbounded',[300,400,500,600,700,800],'sans'],['Onest',[300,400,500,600,700,800],'sans'],['Manrope',[300,400,500,600,700,800],'sans'],['Golos Text',[400,500,600,700,800],'sans'],['Inter',[300,400,500,600,700,800],'sans'],['Geologica',[300,400,500,600,700,800],'sans'],['Montserrat',[300,400,500,600,700,800],'sans'],['Raleway',[300,400,500,600,700,800],'sans'],['Rubik',[300,400,500,600,700,800],'sans'],['Nunito',[300,400,500,600,700,800],'sans'],['Jost',[300,400,500,600,700,800],'sans'],['Commissioner',[300,400,500,600,700,800],'sans'],['IBM Plex Sans',[300,400,500,600,700],'sans'],['Fira Sans',[300,400,500,600,700,800],'sans'],['Exo 2',[300,400,500,600,700,800],'sans'],['Wix Madefor Display',[400,500,600,700,800],'sans'],['Oswald',[300,400,500,600,700],'sans'],['Comfortaa',[300,400,500,600,700],'sans'],['Tenor Sans',[400],'sans'],['Russo One',[400],'sans'],
+  ['Playfair Display',[400,500,600,700,800],'serif'],['Cormorant Garamond',[300,400,500,600,700],'serif'],['Lora',[400,500,600,700],'serif'],['PT Serif',[400,700],'serif'],['Literata',[300,400,500,600,700,800],'serif'],['Source Serif 4',[300,400,500,600,700,800],'serif'],['Spectral',[300,400,500,600,700,800],'serif'],['Alegreya',[400,500,600,700,800],'serif'],['Prata',[400],'serif'],['Yeseva One',[400],'serif'],['Roboto Slab',[300,400,500,600,700,800],'serif'],['Merriweather',[300,400,700,900],'serif'],
+  ['JetBrains Mono',[300,400,500,600,700,800],'mono'],['Caveat',[400,500,600,700],'hand'],['Lobster',[400],'hand'],
+];
+const fontInfo = (fam) => FONT_LIST.find((f) => f[0] === fam) || [fam, [400, 700], 'sans'];
+const FALLBACK = { sans: 'system-ui, sans-serif', serif: 'Georgia, serif', mono: 'ui-monospace, monospace', hand: 'cursive', custom: 'system-ui, sans-serif' };
+const famCss = (fam) => `"${fam}", ${FALLBACK[fontInfo(fam)[2]] || 'sans-serif'}`;
+const famSvg = (fam) => `'${fam.replace(/'/g, '')}', ${fontInfo(fam)[2] === 'serif' ? 'serif' : 'sans-serif'}`;
+const fontLinks = {};
+function ensureFont(fam) {
+  const info = fontInfo(fam);
+  if (info[2] === 'custom') return Promise.resolve();
+  if (!fontLinks[fam]) {
+    fontLinks[fam] = new Promise((res) => {
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = `https://fonts.googleapis.com/css2?family=${fam.replace(/ /g, '+')}:wght@${info[1].join(';')}&display=swap`;
+      l.onload = () => res(true); l.onerror = () => res(false);
+      document.head.appendChild(l);
+      setTimeout(() => res(false), 8000);
+    }).then(() => Promise.all(info[1].map((w) => document.fonts.load(`${w} 40px "${fam}"`, 'АаЯяBb09')))).catch(() => {});
+  }
+  return fontLinks[fam];
+}
+const strongWeight = (fam, base) => { const ws = fontInfo(fam)[1]; return ws.find((w) => w >= Math.max(base + 100, 500) && w <= 700) || ws.find((w) => w > base) || base; };
+const nearestWeight = (fam, w) => { const ws = fontInfo(fam)[1]; return ws.reduce((a, b) => (Math.abs(b - w) < Math.abs(a - w) ? b : a), ws[0]); };
+
+/* ---------- state ---------- */
+const DEFAULTS = {
+  name: 'Ровно', word: 'ровно', slogan: 'Ровный доход для тех, кто работает на себя',
+  about: 'Сервис, который откладывает с жирных месяцев и доплачивает в пустые. Фрилансер получает одну и ту же сумму каждый месяц.',
+  year: '2026', author: 'Стас Чекалин', contact: 'бренд@ровно.рф', person: 'Анна Кравец', role: 'Основатель',
+  mark: 'stripes', logo: null,
+  colors: { primary: '#3D5AFE', accent: '#FFB547', ink: '#111318', paper: '#F3F4F6' },
+  cnames: { primary: '', accent: '', ink: '', paper: '' },
+  head: { family: 'Unbounded', weight: 600 }, body: { family: 'Onest', weight: 400 },
+  principle: 'Говорим как друг, который разбирается в деньгах. Обращаемся на «вы» и обходимся без восклицательных знаков.',
+  voice: [
+    ['Пятого числа придут 60 000 ₽, как обычно.', 'Уважаемый клиент! Информируем вас о зачислении денежных средств.'],
+    ['В октябре заказов меньше. Доплатим из подушки, делать ничего не нужно.', 'Внимание! Ваш доход ниже среднего значения за период.'],
+    ['Отложили 12 000 ₽ с сентября. Подушка выросла до двух месяцев.', 'Поздравляем!!! Вы на шаг ближе к финансовой свободе!'],
+  ],
+};
+const KEY = 'brandbook-za-vecher-v1';
+const clone = (o) => JSON.parse(JSON.stringify(o));
+let S = clone(DEFAULTS);
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) {
+    const saved = JSON.parse(raw);
+    S = Object.assign(clone(DEFAULTS), saved, {
+      colors: Object.assign({}, DEFAULTS.colors, saved.colors), cnames: Object.assign({}, DEFAULTS.cnames, saved.cnames),
+      head: Object.assign({}, DEFAULTS.head, saved.head), body: Object.assign({}, DEFAULTS.body, saved.body),
+      voice: Array.isArray(saved.voice) && saved.voice.length === 3 ? saved.voice : clone(DEFAULTS.voice),
+    });
+    if (!FONT_LIST.some((f) => f[0] === S.head.family)) S.head = clone(DEFAULTS.head);
+    if (!FONT_LIST.some((f) => f[0] === S.body.family)) S.body = clone(DEFAULTS.body);
+  }
+} catch (e) { /* storage unavailable: start from the example */ }
+let saveTimer;
+function save() { clearTimeout(saveTimer); saveTimer = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }, 300); }
+const isExample = () => JSON.stringify(Object.assign({}, S, { logo: null })) === JSON.stringify(Object.assign({}, DEFAULTS, { logo: null })) && !S.logo;
+
+/* ---------- logo ---------- */
+const MARKS = {
+  stripes: [{ t: 'r', x: 0, y: 6, w: 100, h: 22, r: 11 }, { t: 'r', x: 0, y: 39, w: 100, h: 22, r: 11 }, { t: 'r', x: 0, y: 72, w: 100, h: 22, r: 11 }],
+  circle: [{ t: 'c', cx: 50, cy: 50, r: 50 }],
+  arch: [{ t: 'p', d: 'M0 100V50A50 50 0 0 1 100 50V100Z' }],
+  spark: [{ t: 'p', d: 'M50 0C54 34 66 46 100 50C66 54 54 66 50 100C46 66 34 54 0 50C34 46 46 34 50 0Z' }],
+  corner: [{ t: 'p', d: 'M0 0H100V50A50 50 0 0 0 50 100H0Z' }],
+  ring: [{ t: 'p', d: 'M50 0A50 50 0 1 1 49.99 0ZM50 28A22 22 0 1 0 50.01 28Z', rule: 'evenodd' }],
+  none: [],
+};
+const MARK_TITLES = { stripes: 'Три полосы', circle: 'Круг', arch: 'Арка', spark: 'Искра', corner: 'Срез', ring: 'Кольцо', none: 'Без знака' };
+function markEls(kind, x, y, size, fill) {
+  const k = size / 100;
+  return (MARKS[kind] || []).map((u) => {
+    if (u.t === 'r') return { type: 'rect', x: x + u.x * k, y: y + u.y * k, w: u.w * k, h: u.h * k, r: u.r * k, fill };
+    if (u.t === 'c') return { type: 'circle', cx: x + u.cx * k, cy: y + u.cy * k, r: u.r * k, fill };
+    return { type: 'path', d: u.d, tx: x, ty: y, s: k, fill, rule: u.rule };
+  });
+}
+let LV = {}; // logo variants: color, dark, light, primary, wrong
+function parseSvg(text) {
+  const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+  const svg = doc.documentElement;
+  if (!svg || svg.nodeName.toLowerCase() !== 'svg' || doc.getElementsByTagName('parsererror').length) throw new Error('bad svg');
+  svg.querySelectorAll('script,foreignObject').forEach((n) => n.remove());
+  for (const el of [svg, ...svg.querySelectorAll('*')]) for (const a of [...el.attributes]) if (/^on/i.test(a.name)) el.removeAttribute(a.name);
+  let w, h;
+  const vb = svg.getAttribute('viewBox');
+  if (vb) { const p = vb.trim().split(/[\s,]+/).map(Number); w = p[2]; h = p[3]; }
+  else { w = parseFloat(svg.getAttribute('width')) || 100; h = parseFloat(svg.getAttribute('height')) || 100; svg.setAttribute('viewBox', `0 0 ${w} ${h}`); }
+  if (!(w > 0 && h > 0)) throw new Error('bad size');
+  svg.setAttribute('width', w); svg.setAttribute('height', h);
+  if (!svg.getAttribute('xmlns')) svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  return { kind: 'svg', svg: new XMLSerializer().serializeToString(svg), w, h };
+}
+function recolorSvg(src, color) {
+  const doc = new DOMParser().parseFromString(src, 'image/svg+xml');
+  const svg = doc.documentElement;
+  for (const el of [svg, ...svg.querySelectorAll('*')]) {
+    const n = el.localName;
+    if (n === 'style') { el.textContent = el.textContent.replace(/(fill|stroke)\s*:\s*(?!none)[^;}]+/gi, `$1:${color}`); continue; }
+    if (n === 'stop') { el.setAttribute('stop-color', color); continue; }
+    for (const a of ['fill', 'stroke']) { const v = el.getAttribute(a); if (v && v !== 'none') el.setAttribute(a, color); }
+    const st = el.getAttribute('style');
+    if (st) el.setAttribute('style', st.replace(/(fill|stroke)\s*:\s*(?!none)[^;]+/gi, `$1:${color}`));
+  }
+  if (!svg.getAttribute('fill')) svg.setAttribute('fill', color);
+  return new XMLSerializer().serializeToString(svg);
+}
+const svgUrl = (s) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+const loadImage = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+async function recolorRaster(src, color) {
+  const img = await loadImage(src);
+  const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const x = c.getContext('2d'); x.drawImage(img, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, c.width, c.height);
+  return c.toDataURL('image/png');
+}
+async function buildLogoVariants() {
+  LV = {};
+  const L = S.logo;
+  if (!L) return;
+  const D0 = derive();
+  const set = { dark: D0.K, light: '#FFFFFF', primary: D0.P, wrong: D0.wrong };
+  if (L.kind === 'svg') {
+    LV.color = svgUrl(L.svg);
+    for (const k in set) LV[k] = svgUrl(recolorSvg(L.svg, set[k]));
+  } else {
+    LV.color = L.src;
+    for (const k in set) LV[k] = await recolorRaster(L.src, set[k]);
+  }
+}
+
+/* ---------- text measurement ---------- */
+const mctx = document.createElement('canvas').getContext('2d');
+const HAS_LS = 'letterSpacing' in mctx;
+const fontStr = (f) => `${f.weight || 400} ${f.size}px ${famCss(f.family)}`;
+const mcache = new Map();
+function measure(text, f) {
+  const k = fontStr(f) + '|' + text;
+  let w = mcache.get(k);
+  if (w == null) { mctx.font = fontStr(f); if (HAS_LS) mctx.letterSpacing = '0px'; w = mctx.measureText(text).width; mcache.set(k, w); }
+  return w + (f.ls || 0) * Math.max(0, [...text].length - 1);
+}
+function fmetrics(f) {
+  mctx.font = fontStr(f);
+  const m = mctx.measureText('НрЙу');
+  const asc = m.fontBoundingBoxAscent != null ? m.fontBoundingBoxAscent : f.size * 0.82;
+  const desc = m.fontBoundingBoxDescent != null ? m.fontBoundingBoxDescent : f.size * 0.22;
+  const cap = mctx.measureText('Н').actualBoundingBoxAscent || f.size * 0.7;
+  return { asc, desc, cap };
+}
+function wrap(text, f, maxW) {
+  const out = [];
+  for (const para of String(text).split('\n')) {
+    const words = para.split(' ');
+    let line = '';
+    for (const w of words) {
+      const test = line ? line + ' ' + w : w;
+      if (!maxW || measure(test, f) <= maxW) { line = test; continue; }
+      if (line) out.push(line);
+      if (measure(w, f) > maxW) {
+        let chunk = '';
+        for (const ch of [...w]) { if (chunk && measure(chunk + ch, f) > maxW) { out.push(chunk); chunk = ch; } else chunk += ch; }
+        line = chunk;
+      } else line = w;
+    }
+    out.push(line);
+  }
+  return out;
+}
+function T(o) {
+  const el = Object.assign({ type: 'text', align: 'left' }, o);
+  const f = el.f;
+  const text = el.upper ? String(el.text).toUpperCase() : String(el.text);
+  const lh = (f.lh || 1.2) * f.size;
+  const { asc, desc } = fmetrics(f);
+  if (el.yBase != null) {
+    const w = measure(text, f);
+    let x = el.x; if (el.align === 'center') x -= w / 2; else if (el.align === 'right') x -= w;
+    el.lines = [{ s: text, x, y: el.yBase, w }]; el.h = lh; el.wMax = w; return el;
+  }
+  let lines = wrap(text, f, el.w);
+  if (el.maxLines && lines.length > el.maxLines) {
+    lines = lines.slice(0, el.maxLines);
+    let last = lines[lines.length - 1];
+    while (last.length > 1 && measure(last + '…', f) > el.w) last = last.slice(0, -1);
+    lines[lines.length - 1] = last.trimEnd() + '…';
+  }
+  const base = (lh - (asc + desc)) / 2 + asc;
+  el.lines = lines.map((s, i) => {
+    const w = measure(s, f);
+    let x = el.x;
+    if (el.align === 'center') x = el.w ? el.x + (el.w - w) / 2 : el.x - w / 2;
+    else if (el.align === 'right') x = el.w ? el.x + el.w - w : el.x - w;
+    return { s, x, y: el.y + i * lh + base, w };
+  });
+  el.h = lines.length * lh;
+  el.wMax = Math.max(0, ...el.lines.map((l) => l.w));
+  return el;
+}
+
+/* ---------- derived palette & fonts ---------- */
+let D;
+function derive() {
+  const c = S.colors;
+  const P = normHex(c.primary), A = normHex(c.accent), K = normHex(c.ink), Wp = normHex(c.paper);
+  const sp = makeScale(P), sa = makeScale(A);
+  let t = 0.45, muted = mixHex(K, Wp, t);
+  while (contrast(muted, Wp) < 4.6 && t > 0.05) { t -= 0.05; muted = mixHex(K, Wp, t); }
+  const line = mixHex(K, Wp, 0.84);
+  const surface = lum(Wp) > 0.6 ? '#FFFFFF' : mixHex(Wp, '#FFFFFF', 0.08);
+  let pInk = P;
+  if (contrast(P, Wp) < 4.5) { pInk = K; for (let i = sp.anchor; i < 11; i++) if (contrast(sp.steps[i], Wp) >= 4.5) { pInk = sp.steps[i]; break; } }
+  const lch = hexToOklch(P);
+  return {
+    P, A, K, Wp, sp, sa, muted, line, surface, pInk,
+    onP: onColor(P, K), onA: onColor(A, K), soft: sp.steps[1],
+    wrong: oklchToHex(0.62, 0.2, (lch.h + 150) % 360),
+    names: {
+      primary: S.cnames.primary.trim() || colorName(P), accent: S.cnames.accent.trim() || colorName(A),
+      ink: S.cnames.ink.trim() || colorName(K), paper: S.cnames.paper.trim() || colorName(Wp),
+    },
+  };
+}
+const HF = (size, o) => Object.assign({ family: S.head.family, weight: S.head.weight, size, lh: 1.08, ls: -0.02 * size }, o);
+const BF = (size, o) => Object.assign({ family: S.body.family, weight: S.body.weight, size, lh: 1.45, ls: 0 }, o);
+const BS = (size, o) => BF(size, Object.assign({ weight: strongWeight(S.body.family, S.body.weight) }, o));
+const LABEL = (size, o) => BS(size, Object.assign({ ls: size * 0.1, lh: 1.2 }, o));
+
+/* logo as scene elements */
+function logoEls(x, y, h, variant) {
+  if (S.logo) {
+    const w = (h * S.logo.w) / S.logo.h;
+    return { els: [{ type: 'image', x, y, w, h, src: LV[variant] || LV.color || '' }], w };
+  }
+  const cols = { color: [D.P, D.K], dark: [D.K, D.K], light: ['#FFFFFF', '#FFFFFF'], primary: [D.P, D.P], wrong: [D.wrong, D.wrong] }[variant] || [D.P, D.K];
+  const els = [];
+  let cx = x;
+  if (S.mark !== 'none') { els.push(...markEls(S.mark, x, y, h, cols[0])); cx += h * 1.3; }
+  const f = HF(h * 0.92, { lh: 1 });
+  const word = S.word || S.name || ' ';
+  const { cap } = fmetrics(f);
+  const t = T({ x: cx, yBase: y + h / 2 + cap / 2, text: word, f, fill: cols[1] });
+  els.push(t);
+  return { els, w: cx - x + t.wMax };
+}
+const logoW = (h) => logoEls(0, 0, h, 'color').w;
+const fitH = (maxW, maxH) => Math.max(12, Math.min(maxH, (maxH * maxW) / Math.max(1, logoW(maxH))));
+
+/* ---------- pages ---------- */
+const PAGES = [
+  ['cover', 'Обложка'], ['toc', 'Содержание'], ['logo', 'Логотип и охранное поле'], ['versions', 'Версии логотипа'], ['misuse', 'Как нельзя'],
+  ['colors', 'Цвета'], ['scales', 'Шкалы и контраст'], ['fonts', 'Шрифты'], ['hierarchy', 'Иерархия текста'], ['voice', 'Голос бренда'],
+  ['social', 'Соцсети'], ['web', 'Сайт'], ['print', 'Визитка и презентация'], ['contacts', 'Контакты'],
+];
+function base(no, section, title, bg) {
+  const els = [{ type: 'rect', x: 0, y: 0, w: W, h: H, fill: bg || D.Wp }];
+  const dark = bg && lum(bg) < 0.25;
+  els.push(T({ x: M, y: 44, text: `${pad(no)}   ${section}`, f: LABEL(13), fill: dark ? mixHex('#FFFFFF', bg, 0.3) : D.pInk, upper: true }));
+  els.push(T({ x: W - M, y: 44, text: S.name, f: BF(14, { lh: 1.2 }), fill: dark ? mixHex('#FFFFFF', bg, 0.4) : D.muted, align: 'right' }));
+  let top = 96;
+  if (title) {
+    const t = T({ x: M, y: 92, w: 1100, text: nb(title), f: HF(46, { lh: 1.1 }), fill: dark ? '#FFFFFF' : D.K });
+    els.push(t); top = 92 + t.h + 36;
+  }
+  return { els, top };
+}
+const cross = (x, y) => [{ type: 'circle', cx: x, cy: y, r: 15, fill: '#E5484D' }, { type: 'line', x1: x - 5.5, y1: y - 5.5, x2: x + 5.5, y2: y + 5.5, stroke: '#FFFFFF', sw: 2.4 }, { type: 'line', x1: x + 5.5, y1: y - 5.5, x2: x - 5.5, y2: y + 5.5, stroke: '#FFFFFF', sw: 2.4 }];
+const check = (x, y, fill, mark) => [{ type: 'circle', cx: x, cy: y, r: 13, fill }, { type: 'path', d: 'M30 52L44 66L72 36', tx: x - 13, ty: y - 13, s: 0.26, stroke: mark, sw: 9.5, fill: 'none', cap: 'round' }];
+
+function pCover(no) {
+  const els = [{ type: 'rect', x: 0, y: 0, w: W, h: H, fill: D.Wp }];
+  if (S.logo || S.mark === 'none') { els.push({ type: 'circle', cx: 1260, cy: 430, r: 340, fill: D.P }, { type: 'circle', cx: 1010, cy: 690, r: 130, fill: D.A }); }
+  else { els.push(...markEls(S.mark, 900, 120, 660, D.P), { type: 'circle', cx: 1436, cy: 760, r: 104, fill: D.A }); }
+  els.push(...logoEls(M, M, 60, 'color').els);
+  els.push(T({ x: M, y: 470, text: 'Брендбук', f: LABEL(15), fill: D.pInk, upper: true }));
+  els.push(T({ x: M, y: 512, w: 760, text: nb(S.slogan), f: HF(58, { lh: 1.08 }), fill: D.K, maxLines: 4 }));
+  els.push(T({ x: M, y: H - M - 22, text: [S.year, S.author].filter(Boolean).join(' · '), f: BF(16, { lh: 1.4 }), fill: D.muted }));
+  return els;
+}
+function pToc(no) {
+  const { els, top } = base(no, 'Содержание', 'Что внутри');
+  const items = PAGES.map((p, i) => [i + 1, p[1]]).slice(2);
+  const colW = 680, rowH = 66;
+  items.forEach(([n, t], i) => {
+    const col = i < 6 ? 0 : 1, row = i % 6;
+    const x = M + col * (colW + 80), y = top + 10 + row * rowH;
+    els.push({ type: 'line', x1: x, y1: y, x2: x + colW, y2: y, stroke: D.line, sw: 1 });
+    els.push(T({ x, y: y + 18, text: pad(n), f: HF(22, { lh: 1.3 }), fill: D.pInk }));
+    els.push(T({ x: x + 74, y: y + 18, w: colW - 74, text: t, f: BF(22, { lh: 1.3 }), fill: D.K }));
+  });
+  return els;
+}
+function pLogo(no) {
+  const { els, top } = base(no, 'Логотип', 'Логотип и охранное поле');
+  const txt = S.logo
+    ? 'Вокруг логотипа всегда остаётся охранное поле x, равное половине его высоты. В эту зону не заходят тексты, края макета и чужие логотипы.'
+    : 'Логотип собран из знака и надписи. Вокруг него всегда остаётся охранное поле x, равное половине высоты знака. В эту зону не заходят тексты, края макета и чужие логотипы.';
+  const t1 = T({ x: M, y: top, w: 400, text: nb(txt), f: BF(19, { lh: 1.5 }), fill: D.K });
+  els.push(t1);
+  let y = top + t1.h + 44;
+  els.push(T({ x: M, y, text: 'Минимальный размер', f: LABEL(13), fill: D.pInk, upper: true }));
+  y += 34;
+  for (const [h, lab] of [[40, '40 px'], [28, '28 px'], [20, '20 px, меньше нельзя']]) {
+    els.push(...logoEls(M, y, h, 'color').els);
+    els.push(T({ x: M, y: y + h + 8, text: lab, f: BF(13, { lh: 1.3 }), fill: D.muted }));
+    y += h + 44;
+  }
+  els.push(T({ x: M, y, w: 400, text: nb('В печати высота логотипа не меньше 7 мм.'), f: BF(15, { lh: 1.4 }), fill: D.muted }));
+  const bx = 560, by = top, bw = W - M - bx, bh = H - M - top;
+  els.push({ type: 'rect', x: bx, y: by, w: bw, h: bh, fill: D.surface, r: 10 });
+  const lh = fitH(bw - 160, 110), lw = logoW(lh), xu = lh / 2;
+  const lx = bx + (bw - lw) / 2, ly = by + (bh - lh) / 2;
+  for (const yy of [ly, ly + lh]) els.push({ type: 'line', x1: bx, y1: yy, x2: bx + bw, y2: yy, stroke: D.line, sw: 1 });
+  for (const xx of [lx, lx + lw]) els.push({ type: 'line', x1: xx, y1: by, x2: xx, y2: by + bh, stroke: D.line, sw: 1 });
+  els.push({ type: 'rect', x: lx - xu, y: ly - xu, w: lw + 2 * xu, h: lh + 2 * xu, fill: 'none', stroke: D.pInk, sw: 1.5, dash: '7 6' });
+  const boxes = [[lx - xu, ly + (lh - xu) / 2], [lx + lw, ly + (lh - xu) / 2], [lx + (lw - xu) / 2, ly - xu], [lx + (lw - xu) / 2, ly + lh]];
+  for (const [x, yy] of boxes) {
+    els.push({ type: 'rect', x, y: yy, w: xu, h: xu, fill: D.soft });
+    els.push(T({ x: x + xu / 2, y: yy + xu / 2 - 13, text: 'x', f: HF(20, { lh: 1.3, ls: 0 }), fill: D.pInk, align: 'center' }));
+  }
+  els.push(...logoEls(lx, ly, lh, 'color').els);
+  return els;
+}
+function pVersions(no) {
+  const { els, top } = base(no, 'Логотип', 'Версии логотипа');
+  const onP = contrast('#FFFFFF', D.P) >= 2.4 ? 'light' : 'dark';
+  const tiles = [
+    ['Основная, на светлом фоне', D.surface, 'color'],
+    ['Инверсия, на тёмном фоне', D.K, 'light'],
+    ['На фирменном цвете', D.P, onP],
+    ['В один цвет, для печати и штампов', '#FFFFFF', 'dark'],
+  ];
+  const tw = (W - 2 * M - 24) / 2, th = (H - M - top - 24) / 2;
+  tiles.forEach(([lab, bg, v], i) => {
+    const x = M + (i % 2) * (tw + 24), y = top + Math.floor(i / 2) * (th + 24);
+    els.push({ type: 'rect', x, y, w: tw, h: th, fill: bg, r: 10, stroke: lum(bg) > 0.8 ? D.line : null, sw: 1 });
+    const h = fitH(tw - 120, 64), w = logoW(h);
+    els.push(...logoEls(x + (tw - w) / 2, y + (th - h) / 2 - 10, h, v).els);
+    els.push(T({ x: x + 24, y: y + th - 44, text: lab, f: BF(14, { lh: 1.4 }), fill: lum(bg) < 0.3 ? mixHex('#FFFFFF', bg, 0.3) : (bg === D.P ? D.onP : D.muted) }));
+  });
+  return els;
+}
+function pMisuse(no) {
+  const { els, top } = base(no, 'Логотип', 'Как нельзя');
+  const tw = (W - 2 * M - 48) / 3, th = (H - M - top - 24) / 2;
+  const items = [
+    ['Не растягивай и не сжимай', 'stretch'], ['Не поворачивай', 'rotate'], ['Не перекрашивай в чужие цвета', 'wrong'],
+    ['Не добавляй тени и эффекты', 'shadow'], ['Не ставь на пёстрый фон', 'busy'], ['Не залезай в охранное поле', 'crowd'],
+  ];
+  items.forEach(([lab, kind], i) => {
+    const x = M + (i % 3) * (tw + 24), y = top + Math.floor(i / 3) * (th + 24);
+    const kids = [];
+    kids.push({ type: 'rect', x, y, w: tw, h: th, fill: D.surface });
+    const h = fitH(tw - 120, 54), w = logoW(h), cx = x + tw / 2, cy = y + th / 2 - 14;
+    const lx = cx - w / 2, ly = cy - h / 2;
+    if (kind === 'busy') {
+      const cols = [D.P, D.A, D.K, D.soft, D.sa.steps[2], D.sp.steps[6]];
+      for (let k = 0; k < 9; k++) kids.push({ type: 'circle', cx: x + ((k * 97) % tw), cy: y + ((k * 61) % th), r: 50 + ((k * 37) % 70), fill: cols[k % cols.length] });
+    }
+    let logo = logoEls(lx, ly, h, kind === 'wrong' ? 'wrong' : 'color').els;
+    if (kind === 'stretch') logo = [{ type: 'group', ops: [['translate', cx, cy], ['scale', 1.55, 0.72], ['translate', -cx, -cy]], children: logo }];
+    if (kind === 'rotate') logo = [{ type: 'group', ops: [['translate', cx, cy], ['rotate', -14], ['translate', -cx, -cy]], children: logo }];
+    if (kind === 'shadow') logo = [{ type: 'group', shadow: { dx: 6, dy: 10, blur: 10, color: 'rgba(0,0,0,0.45)' }, children: logo }];
+    kids.push(...logo);
+    if (kind === 'crowd') {
+      kids.push(T({ x: Math.min(lx + w * 0.55, x + tw - 150), y: ly - 34, text: 'СКИДКИ', f: HF(28, { lh: 1, weight: nearestWeight(S.head.family, 800) }), fill: D.wrong }));
+      kids.push({ type: 'rect', x: lx - 26, y: ly + h + 4, w: w + 52, h: 10, fill: D.A });
+    }
+    kids.push(...cross(x + 30, y + 30));
+    kids.push({ type: 'rect', x, y: y + th - 50, w: tw, h: 50, fill: D.surface });
+    kids.push(T({ x: x + 20, y: y + th - 38, w: tw - 40, text: lab, f: BF(14, { lh: 1.4 }), fill: D.K }));
+    els.push({ type: 'group', clip: { x, y, w: tw, h: th, r: 10 }, children: kids });
+  });
+  return els;
+}
+function pColors(no) {
+  const { els, top } = base(no, 'Цвета', 'Фирменные цвета');
+  const sw = [['primary', 'Основной', D.P, 528], ['accent', 'Акцент', D.A, 280], ['ink', 'Текст', D.K, 280], ['paper', 'Фон', D.Wp, 280]];
+  const sh = 400;
+  let x = M;
+  for (const [k, role, hex, w] of sw) {
+    const fg = onColor(hex, D.K === hex ? '#111111' : D.K);
+    els.push({ type: 'rect', x, y: top, w, h: sh, fill: hex, r: 10, stroke: contrast(hex, D.Wp) < 1.25 ? D.line : null, sw: 1 });
+    const [r, g, b] = hexToRgb(hex), [cc, mm, yy, kk] = cmyk(hex);
+    els.push(T({ x: x + 26, y: top + 24, text: role, f: LABEL(12), fill: fg, upper: true }));
+    const nm = T({ x: x + 26, y: top + sh - 160, w: w - 52, text: D.names[k], f: HF(28, { lh: 1.15 }), fill: fg, maxLines: 1 });
+    els.push(nm);
+    const specs = [`HEX  ${hex}`, `RGB  ${r} ${g} ${b}`, `CMYK ≈ ${cc} ${mm} ${yy} ${kk}`];
+    specs.forEach((s, i) => els.push(T({ x: x + 26, y: top + sh - 112 + i * 28, text: s, f: BF(15, { lh: 1.4 }), fill: fg })));
+    x += w + 24;
+  }
+  const y = top + sh + 44;
+  els.push(T({ x: M, y, text: 'Пропорции в макетах', f: LABEL(13), fill: D.pInk, upper: true }));
+  const parts = [['paper', D.Wp, 55], ['ink', D.K, 25], ['primary', D.P, 14], ['accent', D.A, 6]];
+  let bx = M; const bw = W - 2 * M, by = y + 32;
+  for (const [k, hex, pct] of parts) {
+    const w = (bw * pct) / 100;
+    els.push({ type: 'rect', x: bx, y: by, w: w - 4, h: 44, fill: hex, stroke: contrast(hex, D.Wp) < 1.25 ? D.line : null, sw: 1, r: 4 });
+    els.push(T({ x: bx, y: by + 56, w: Math.max(w - 8, 80), text: `${D.names[k]} ${pct}%`, f: BF(14, { lh: 1.3 }), fill: D.K }));
+    bx += w;
+  }
+  els.push(T({ x: M, y: H - M - 4, text: nb('CMYK посчитан примерно. Для печати сверь цвет по образцу в типографии.'), f: BF(13, { lh: 1.3 }), fill: D.muted }));
+  return els;
+}
+function badge(r) { return r >= 7 ? ['AAA', true] : r >= 4.5 ? ['AA', true] : r >= 3 ? ['AA для крупного', true] : ['Не проходит', false]; }
+function pScales(no) {
+  const { els, top } = base(no, 'Цвета', 'Шкалы и контраст');
+  const cw = (W - 2 * M - 10 * 8) / 11, ch = 84;
+  let y = top;
+  for (const [lab, sc] of [[D.names.primary, D.sp], [D.names.accent, D.sa]]) {
+    els.push(T({ x: M, y, text: lab, f: BS(15, { lh: 1.3 }), fill: D.K }));
+    y += 28;
+    sc.steps.forEach((hex, i) => {
+      const x = M + i * (cw + 8);
+      const fg = onColor(hex, D.K);
+      els.push({ type: 'rect', x, y, w: cw, h: ch, fill: hex, r: 6, stroke: contrast(hex, D.Wp) < 1.2 ? D.line : null, sw: 1 });
+      els.push(T({ x: x + 12, y: y + 12, text: String(STEPS[i]), f: BS(13, { lh: 1.2 }), fill: fg }));
+      els.push(T({ x: x + 12, y: y + ch - 28, text: hex, f: BF(12, { lh: 1.2 }), fill: fg }));
+      if (i === sc.anchor) els.push({ type: 'circle', cx: x + cw - 16, cy: y + 18, r: 5, fill: fg });
+    });
+    y += ch + 26;
+  }
+  els.push(T({ x: M, y: y + 4, text: 'Контраст текста по WCAG 2.2', f: LABEL(13), fill: D.pInk, upper: true }));
+  y += 38;
+  const pairs = [['Текст на фоне', D.K, D.Wp], ['Вторичный текст', D.muted, D.Wp], ['Ссылка на фоне', D.pInk, D.Wp], ['Фон на тёмном', D.Wp, D.K], ['Текст на кнопке', D.onP, D.P], ['Текст на акценте', D.onA, D.A]];
+  const pw = (W - 2 * M - 48) / 3, ph = (H - M - y - 16) / 2;
+  pairs.forEach(([lab, fg, bg], i) => {
+    const x = M + (i % 3) * (pw + 24), yy = y + Math.floor(i / 3) * (ph + 16);
+    const r = contrast(fg, bg), [bt, ok] = badge(r);
+    els.push({ type: 'rect', x, y: yy, w: pw, h: ph, fill: D.surface, r: 8 });
+    els.push({ type: 'rect', x, y: yy, w: ph * 1.25, h: ph, fill: bg, r: 8, stroke: contrast(bg, D.surface) < 1.2 ? D.line : null, sw: 1 });
+    els.push(T({ x: x + (ph * 1.25) / 2, y: yy + ph / 2 - 26, text: 'Аа', f: HF(36, { lh: 1.4, ls: 0 }), fill: fg, align: 'center' }));
+    const ix = x + ph * 1.25 + 20;
+    els.push(T({ x: ix, y: yy + 14, text: r.toFixed(1).replace('.', ',') + ' : 1', f: HF(24, { lh: 1.2, ls: 0 }), fill: D.K }));
+    els.push(T({ x: ix, y: yy + 46, w: pw - ph * 1.25 - 36, text: lab, f: BF(14, { lh: 1.3 }), fill: D.muted, maxLines: 1 }));
+    const bf = BS(12, { lh: 1.2 }), bwid = measure(bt, bf) + 20;
+    els.push({ type: 'rect', x: ix, y: yy + ph - 38, w: bwid, h: 24, r: 12, fill: ok ? mixHex(D.P, '#FFFFFF', 0.86) : '#FDE7E7' });
+    els.push(T({ x: ix + 10, y: yy + ph - 37, text: bt, f: bf, fill: ok ? (contrast(D.pInk, '#FFFFFF') >= 4.5 ? D.pInk : D.K) : '#B42318' }));
+  });
+  return els;
+}
+function pFonts(no) {
+  const { els, top } = base(no, 'Типографика', 'Шрифты');
+  const cols = [[S.head, 'Заголовки', true], [S.body, 'Основной текст', false]];
+  const cw = (W - 2 * M - 80) / 2;
+  cols.forEach(([fnt, role, isHead], i) => {
+    const x = M + i * (cw + 80);
+    let y = top - 10;
+    const f = isHead ? HF : BF;
+    const big = T({ x: x - 6, y, text: 'Аа', f: f(190, { lh: 1, weight: fnt.weight, ls: 0 }), fill: i ? D.K : D.P });
+    els.push(big); y += big.h + 6;
+    els.push(T({ x, y, w: cw, text: fnt.family, f: f(30, { lh: 1.2, weight: fnt.weight, ls: 0 }), fill: D.K, maxLines: 1 })); y += 44;
+    const src = fontInfo(fnt.family)[2] === 'custom' ? 'свой файл' : 'Google Fonts, бесплатно';
+    els.push(T({ x, y, w: cw, text: `${role} · ${fnt.weight} · ${src}`, f: BF(14, { lh: 1.3 }), fill: D.muted })); y += 40;
+    els.push({ type: 'line', x1: x, y1: y, x2: x + cw, y2: y, stroke: D.line, sw: 1 }); y += 20;
+    if (isHead) {
+      for (const s of ['АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя', 'ABCDEFGHIJKLMN 0123456789 «»!?&@₽%']) {
+        const t = T({ x, y, w: cw, text: s, f: HF(24, { lh: 1.3, ls: 0 }), fill: D.K }); els.push(t); y += t.h + 2;
+      }
+    } else {
+      const t = T({ x, y, w: cw, text: nb(S.about + ' ' + S.principle), f: BF(18, { lh: 1.55 }), fill: D.K, maxLines: 7 }); els.push(t);
+    }
+  });
+  return els;
+}
+function pHierarchy(no) {
+  const { els, top } = base(no, 'Типографика', 'Иерархия текста');
+  const hw = S.head.weight, bw = S.body.weight;
+  const rows = [
+    ['Заголовок 1', HF(60, { lh: 1.05 }), `${S.head.family} ${hw} · 60/63 px · −2%`, S.slogan, 2],
+    ['Заголовок 2', HF(38, { lh: 1.1 }), `${S.head.family} ${hw} · 38/42 px · −2%`, S.slogan, 1],
+    ['Заголовок 3', HF(26, { lh: 1.2 }), `${S.head.family} ${hw} · 26/31 px · −2%`, S.slogan, 1],
+    ['Текст', BF(18, { lh: 1.5 }), `${S.body.family} ${bw} · 18/27 px`, S.about, 2],
+    ['Подпись', BF(14, { lh: 1.4 }), `${S.body.family} ${bw} · 14/20 px`, 'Подпись под фото, сноска или мелкий текст в интерфейсе', 1],
+  ];
+  let y = top - 6;
+  for (const [lab, f, spec, txt, ml] of rows) {
+    const sample = T({ x: M + 380, y, w: W - 2 * M - 380, text: nb(txt), f, fill: D.K, maxLines: ml });
+    els.push(T({ x: M, y: y + 4, text: lab, f: BS(15, { lh: 1.3 }), fill: D.K }));
+    els.push(T({ x: M, y: y + 28, w: 340, text: spec, f: BF(13, { lh: 1.4 }), fill: D.muted }));
+    els.push(sample);
+    y += Math.max(sample.h, 56) + 22;
+    els.push({ type: 'line', x1: M, y1: y - 11, x2: W - M, y2: y - 11, stroke: D.line, sw: 1 });
+  }
+  return els;
+}
+function pVoice(no) {
+  const { els, top } = base(no, 'Голос', 'Голос бренда');
+  const pr = T({ x: M, y: top - 4, w: 1100, text: nb(S.principle), f: BF(21, { lh: 1.5 }), fill: D.K, maxLines: 3 });
+  els.push(pr);
+  let y = top + pr.h + 36;
+  const cw = (W - 2 * M - 24) / 2;
+  els.push(...check(M + 13, y + 13, D.P, D.onP));
+  els.push(T({ x: M + 38, y: y + 2, text: 'Пишем так', f: BS(16, { lh: 1.4 }), fill: D.K }));
+  els.push(...cross(M + cw + 24 + 15, y + 13));
+  els.push(T({ x: M + cw + 24 + 40, y: y + 2, text: 'Не пишем так', f: BS(16, { lh: 1.4 }), fill: D.K }));
+  y += 48;
+  const avail = H - M - y, rowGap = 16, rh = (avail - rowGap * 2) / 3;
+  S.voice.forEach(([good, bad], i) => {
+    const yy = y + i * (rh + rowGap);
+    els.push({ type: 'rect', x: M, y: yy, w: cw, h: rh, fill: D.surface, r: 10 });
+    els.push({ type: 'rect', x: M + cw + 24, y: yy, w: cw, h: rh, fill: 'none', stroke: D.line, sw: 1, r: 10 });
+    els.push(T({ x: M + 28, y: yy + 22, w: cw - 56, text: nb(good), f: BF(20, { lh: 1.45 }), fill: D.K, maxLines: 3 }));
+    els.push(T({ x: M + cw + 52, y: yy + 22, w: cw - 56, text: nb(bad), f: BF(20, { lh: 1.45 }), fill: D.muted, maxLines: 3 }));
+  });
+  return els;
+}
+function mockGroup(x, y, s, w, h, r, kids) { return { type: 'group', ops: [['translate', x, y], ['scale', s, s]], clip: { x: 0, y: 0, w, h, r: r / s }, children: kids }; }
+function pSocial(no) {
+  const { els, top } = base(no, 'Носители', 'Соцсети');
+  const S1 = 0.42, S2 = 0.236, gap = 28;
+  const total = 1080 * S1 * 2 + 1080 * S2 + gap * 2;
+  let x = (W - total) / 2; const y = top + 4;
+  const onPv = contrast('#FFFFFF', D.P) >= 2.4 ? 'light' : 'dark';
+  const p1 = [{ type: 'rect', x: 0, y: 0, w: 1080, h: 1080, fill: D.P }, { type: 'circle', cx: 900, cy: 170, r: 260, fill: D.A }];
+  p1.push(...logoEls(96, 96, 64, onPv).els);
+  p1.push(T({ x: 96, y: 540, w: 860, text: nb(S.slogan), f: HF(84, { lh: 1.05 }), fill: D.onP, maxLines: 4 }));
+  els.push(mockGroup(x, y, S1, 1080, 1080, 12, p1));
+  els.push(T({ x, y: y + 1080 * S1 + 14, text: 'Пост 1080 × 1080', f: BF(14, { lh: 1.3 }), fill: D.muted }));
+  x += 1080 * S1 + gap;
+  const st = [{ type: 'rect', x: 0, y: 0, w: 1080, h: 1920, fill: D.Wp }, { type: 'circle', cx: 820, cy: 640, r: 380, fill: D.A }, { type: 'circle', cx: 300, cy: 860, r: 150, fill: D.P }];
+  st.push(...logoEls(96, 120, 64, 'color').els);
+  st.push(T({ x: 96, y: 1140, w: 880, text: nb(String(S.about).split(/(?<=[.!?])\s+/)[0]), f: HF(64, { lh: 1.08 }), fill: D.K, maxLines: 6 }));
+  st.push({ type: 'rect', x: 96, y: 1660, w: 520, h: 124, r: 62, fill: D.P });
+  st.push(T({ x: 96, y: 1660 + 34, w: 520, text: 'Попробовать', f: BS(44, { lh: 1.25 }), fill: D.onP, align: 'center' }));
+  els.push(mockGroup(x, y, S2, 1080, 1920, 12, st));
+  els.push(T({ x, y: y + 1920 * S2 + 14, text: 'Сторис 1080 × 1920', f: BF(14, { lh: 1.3 }), fill: D.muted }));
+  x += 1080 * S2 + gap;
+  const p2 = [{ type: 'rect', x: 0, y: 0, w: 1080, h: 1080, fill: D.K }, { type: 'rect', x: 96, y: 150, w: 120, h: 16, r: 8, fill: D.A }];
+  p2.push(T({ x: 96, y: 230, w: 880, text: nb('«' + S.voice[0][0] + '»'), f: HF(70, { lh: 1.1 }), fill: '#FFFFFF', maxLines: 6 }));
+  p2.push(...logoEls(96, 920, 56, 'light').els);
+  els.push(mockGroup(x, y, S1, 1080, 1080, 12, p2));
+  els.push(T({ x, y: y + 1080 * S1 + 14, text: 'Пост с фразой из голоса бренда', f: BF(14, { lh: 1.3 }), fill: D.muted }));
+  return els;
+}
+function pWeb(no) {
+  const { els, top } = base(no, 'Носители', 'Первый экран сайта');
+  const fw = W - 2 * M, fh = H - M - top - 30;
+  const k = [{ type: 'rect', x: 0, y: 0, w: fw, h: fh, fill: D.Wp }, { type: 'rect', x: 0, y: 0, w: fw, h: 44, fill: mixHex(D.Wp, D.K, 0.07) }];
+  [24, 46, 68].forEach((cx) => k.push({ type: 'circle', cx, cy: 22, r: 6, fill: mixHex(D.Wp, D.K, 0.25) }));
+  k.push(...logoEls(48, 44 + 30, 30, 'color').els);
+  let lx = 560;
+  for (const l of ['Как это работает', 'Тарифы', 'Вопросы']) { const t = T({ x: lx, y: 44 + 34, text: l, f: BF(17, { lh: 1.3 }), fill: D.K }); k.push(t); lx += t.wMax + 44; }
+  k.push({ type: 'rect', x: fw - 48 - 130, y: 44 + 24, w: 130, h: 44, r: 22, fill: D.K });
+  k.push(T({ x: fw - 48 - 130, y: 44 + 34, w: 130, text: 'Войти', f: BS(16, { lh: 1.4 }), fill: '#FFFFFF', align: 'center' }));
+  const h1 = T({ x: 48, y: 190, w: 700, text: nb(S.slogan), f: HF(60, { lh: 1.05 }), fill: D.K, maxLines: 3 });
+  k.push(h1);
+  const sub = T({ x: 48, y: 190 + h1.h + 24, w: 600, text: nb(S.about), f: BF(19, { lh: 1.5 }), fill: D.muted, maxLines: 3 });
+  k.push(sub);
+  const by = 190 + h1.h + 24 + sub.h + 34;
+  const b1f = BS(17, { lh: 1.3 }), b1 = 'Попробовать бесплатно', b1w = measure(b1, b1f) + 56;
+  k.push({ type: 'rect', x: 48, y: by, w: b1w, h: 56, r: 28, fill: D.P }, T({ x: 48, y: by + 16, w: b1w, text: b1, f: b1f, fill: D.onP, align: 'center' }));
+  const b2 = 'Как это работает', b2w = measure(b2, b1f) + 56;
+  k.push({ type: 'rect', x: 48 + b1w + 14, y: by, w: b2w, h: 56, r: 28, fill: 'none', stroke: D.K, sw: 1.5 }, T({ x: 48 + b1w + 14, y: by + 16, w: b2w, text: b2, f: b1f, fill: D.K, align: 'center' }));
+  if (S.logo || S.mark === 'none') { k.push({ type: 'circle', cx: 1110, cy: 330, r: 210, fill: D.P }, { type: 'circle', cx: 1300, cy: 470, r: 80, fill: D.A }); }
+  else { k.push(...markEls(S.mark, 930, 120, 380, D.P), { type: 'circle', cx: 1320, cy: 470, r: 70, fill: D.A }); }
+  const cx = 860, cy = fh - 150, cwid = 470;
+  k.push({ type: 'group', shadow: { dx: 0, dy: 12, blur: 24, color: 'rgba(0,0,0,0.14)' }, children: [{ type: 'rect', x: cx, y: cy, w: cwid, h: 104, r: 18, fill: D.surface }] });
+  k.push(...check(cx + 36, cy + 52, D.P, D.onP));
+  k.push(T({ x: cx + 66, y: cy + 22, w: cwid - 90, text: nb(S.voice[0][0]), f: BF(17, { lh: 1.4 }), fill: D.K, maxLines: 2 }));
+  els.push({ type: 'group', ops: [['translate', M, top]], clip: { x: 0, y: 0, w: fw, h: fh, r: 14 }, children: k });
+  els.push({ type: 'rect', x: M, y: top, w: fw, h: fh, r: 14, fill: 'none', stroke: D.line, sw: 1 });
+  els.push(T({ x: M, y: top + fh + 10, text: 'Десктоп, ширина 1440 px', f: BF(14, { lh: 1.3 }), fill: D.muted }));
+  return els;
+}
+function pPrint(no) {
+  const { els, top } = base(no, 'Носители', 'Визитка и презентация');
+  const cw = 450, ch = 250;
+  const onPv = contrast('#FFFFFF', D.P) >= 2.4 ? 'light' : 'dark';
+  const front = [{ type: 'rect', x: 0, y: 0, w: cw, h: ch, fill: D.P }];
+  const fh = fitH(cw - 100, 46), lw = logoW(fh);
+  front.push(...logoEls((cw - lw) / 2, (ch - fh) / 2, fh, onPv).els);
+  els.push({ type: 'group', ops: [['translate', M, top]], clip: { x: 0, y: 0, w: cw, h: ch, r: 8 }, children: front });
+  const back = [{ type: 'rect', x: 0, y: 0, w: cw, h: ch, fill: D.surface }];
+  back.push(T({ x: 32, y: 32, w: cw - 64, text: S.person, f: HF(26, { lh: 1.2 }), fill: D.K, maxLines: 1 }));
+  back.push(T({ x: 32, y: 68, w: cw - 64, text: S.role, f: BF(16, { lh: 1.4 }), fill: D.muted, maxLines: 1 }));
+  back.push(T({ x: 32, y: ch - 58, w: cw - 120, text: S.contact, f: BF(16, { lh: 1.4 }), fill: D.K, maxLines: 1 }));
+  if (!S.logo && S.mark !== 'none') back.push(...markEls(S.mark, cw - 32 - 40, ch - 32 - 40, 40, D.P));
+  els.push({ type: 'group', ops: [['translate', M, top + ch + 24]], clip: { x: 0, y: 0, w: cw, h: ch, r: 8 }, children: back });
+  els.push({ type: 'rect', x: M, y: top + ch + 24, w: cw, h: ch, r: 8, fill: 'none', stroke: D.line, sw: 1 });
+  els.push(T({ x: M, y: top + 2 * ch + 24 + 12, text: 'Визитка 90 × 50 мм, лицо и оборот', f: BF(14, { lh: 1.3 }), fill: D.muted }));
+  const px = M + cw + 64, pw = W - M - px, ph = (pw * 9) / 16;
+  const pr = [{ type: 'rect', x: 0, y: 0, w: pw, h: ph, fill: D.K }, { type: 'circle', cx: pw - 150, cy: 120, r: 210, fill: D.P }, { type: 'circle', cx: pw - 330, cy: 300, r: 60, fill: D.A }];
+  pr.push(...logoEls(44, 44, 36, 'light').els);
+  pr.push(T({ x: 44, y: ph - 250, w: pw * 0.6, text: nb(S.slogan), f: HF(46, { lh: 1.08 }), fill: '#FFFFFF', maxLines: 3 }));
+  pr.push(T({ x: 44, y: ph - 64, text: [S.name, S.year].filter(Boolean).join(' · '), f: BF(15, { lh: 1.3 }), fill: mixHex('#FFFFFF', D.K, 0.4) }));
+  els.push({ type: 'group', ops: [['translate', px, top]], clip: { x: 0, y: 0, w: pw, h: ph, r: 10 }, children: pr });
+  els.push(T({ x: px, y: top + ph + 12, text: 'Обложка презентации 16:9', f: BF(14, { lh: 1.3 }), fill: D.muted }));
+  return els;
+}
+function pContacts(no) {
+  const bg = D.K;
+  const { els } = base(no, 'Контакты', '', bg);
+  els.push(...logoEls(M, 140, 56, 'light').els);
+  els.push(T({ x: M, y: 380, w: 1100, text: nb('Вопросы по бренду'), f: HF(76, { lh: 1.05 }), fill: '#FFFFFF' }));
+  els.push(T({ x: M, y: 490, w: 900, text: nb('Если макет не укладывается в правила, напишите автору брендбука. Вместе найдём решение.'), f: BF(21, { lh: 1.5 }), fill: mixHex('#FFFFFF', bg, 0.3) }));
+  els.push(T({ x: M, y: 640, text: S.author, f: HF(30, { lh: 1.2 }), fill: '#FFFFFF' }));
+  els.push(T({ x: M, y: 684, text: S.contact, f: BF(21, { lh: 1.4 }), fill: contrast(D.A, bg) >= 4.5 ? D.A : '#FFFFFF' }));
+  els.push(T({ x: M, y: H - M - 20, text: [S.name, 'брендбук', S.year].filter(Boolean).join(' · '), f: BF(15, { lh: 1.3 }), fill: mixHex('#FFFFFF', bg, 0.45) }));
+  if (!S.logo && S.mark !== 'none') els.push(...markEls(S.mark, 1180, 420, 340, D.P));
+  else els.push({ type: 'circle', cx: 1340, cy: 590, r: 170, fill: D.P });
+  return els;
+}
+const BUILD = { cover: pCover, toc: pToc, logo: pLogo, versions: pVersions, misuse: pMisuse, colors: pColors, scales: pScales, fonts: pFonts, hierarchy: pHierarchy, voice: pVoice, social: pSocial, web: pWeb, print: pPrint, contacts: pContacts };
+function buildPages() { D = derive(); return PAGES.map(([key, title], i) => ({ key, title, no: i + 1, els: BUILD[key](i + 1) })); }
+
+/* ---------- SVG renderer ---------- */
+function toSVG(page) {
+  const defs = []; let uid = 0;
+  const id = (p) => `${page.key}-${p}${++uid}`;
+  const st = (el) => (el.stroke ? ` stroke="${el.stroke}" stroke-width="${el.sw || 1}"${el.dash ? ` stroke-dasharray="${el.dash}"` : ''}${el.cap ? ` stroke-linecap="${el.cap}" stroke-linejoin="round"` : ''}` : '');
+  const op = (el) => (el.opacity != null ? ` opacity="${el.opacity}"` : '');
+  function node(el) {
+    switch (el.type) {
+      case 'rect': return `<rect x="${rn(el.x)}" y="${rn(el.y)}" width="${rn(el.w)}" height="${rn(el.h)}"${el.r ? ` rx="${rn(Math.min(el.r, el.w / 2, el.h / 2))}"` : ''} fill="${el.fill || 'none'}"${st(el)}${op(el)}/>`;
+      case 'circle': return `<circle cx="${rn(el.cx)}" cy="${rn(el.cy)}" r="${rn(el.r)}" fill="${el.fill || 'none'}"${st(el)}${op(el)}/>`;
+      case 'line': return `<line x1="${rn(el.x1)}" y1="${rn(el.y1)}" x2="${rn(el.x2)}" y2="${rn(el.y2)}"${st(el)} fill="none"/>`;
+      case 'path': return `<path d="${el.d}" transform="translate(${rn(el.tx || 0)} ${rn(el.ty || 0)}) scale(${el.s || 1})" fill="${el.fill || 'none'}"${el.rule ? ` fill-rule="${el.rule}"` : ''}${el.stroke ? ` stroke="${el.stroke}" stroke-width="${el.sw}" stroke-linecap="${el.cap || 'butt'}" stroke-linejoin="round"` : ''}/>`;
+      case 'image': return el.src ? `<image href="${esc(el.src)}" x="${rn(el.x)}" y="${rn(el.y)}" width="${rn(el.w)}" height="${rn(el.h)}" preserveAspectRatio="xMidYMid meet"${op(el)}/>` : '';
+      case 'text': {
+        const f = el.f;
+        return `<text font-family="${esc(famSvg(f.family))}" font-weight="${f.weight || 400}" font-size="${rn(f.size)}"${f.ls ? ` letter-spacing="${rn(f.ls)}"` : ''} fill="${el.fill}"${op(el)}>${el.lines.map((l) => `<tspan x="${rn(l.x)}" y="${rn(l.y)}">${esc(l.s)}</tspan>`).join('')}</text>`;
+      }
+      case 'group': {
+        let attrs = '';
+        if (el.ops) attrs += ` transform="${el.ops.map(([k, a, b]) => (k === 'rotate' ? `rotate(${a})` : `${k}(${rn(a)} ${rn(b == null ? a : b)})`)).join(' ')}"`;
+        if (el.clip) { const cid = id('c'); const c = el.clip; defs.push(`<clipPath id="${cid}"><rect x="${rn(c.x)}" y="${rn(c.y)}" width="${rn(c.w)}" height="${rn(c.h)}" rx="${rn(c.r || 0)}"/></clipPath>`); attrs += ` clip-path="url(#${cid})"`; }
+        let inner = el.children.map(node).join('');
+        if (el.shadow) { const fid = id('f'); const s = el.shadow; defs.push(`<filter id="${fid}" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="${s.dx}" dy="${s.dy}" stdDeviation="${s.blur / 2}" flood-color="#000" flood-opacity="${(s.color.match(/[\d.]+\)$/) || ['0.3'])[0].replace(')', '')}"/></filter>`); inner = `<g filter="url(#${fid})">${inner}</g>`; }
+        return `<g${attrs}>${inner}</g>`;
+      }
+      default: return '';
+    }
+  }
+  const body = page.els.map(node).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(page.title)}">${defs.length ? `<defs>${defs.join('')}</defs>` : ''}${body}</svg>`;
+}
+
+/* ---------- canvas renderer ---------- */
+const imgCache = new Map();
+function getImg(src) { if (!imgCache.has(src)) imgCache.set(src, loadImage(src).catch(() => null)); return imgCache.get(src); }
+function collectSrc(els, out) { for (const el of els) { if (el.type === 'image' && el.src) out.add(el.src); if (el.children) collectSrc(el.children, out); } return out; }
+function rrPath(ctx, x, y, w, h, r) {
+  r = Math.max(0, Math.min(r || 0, w / 2, h / 2));
+  ctx.beginPath();
+  if (ctx.roundRect) { ctx.roundRect(x, y, w, h, r); return; }
+  ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function strokeIt(ctx, el) { if (!el.stroke) return; ctx.strokeStyle = el.stroke; ctx.lineWidth = el.sw || 1; ctx.setLineDash(el.dash ? el.dash.split(' ').map(Number) : []); ctx.lineCap = el.cap || 'butt'; ctx.lineJoin = 'round'; ctx.stroke(); ctx.setLineDash([]); }
+function drawEls(ctx, els, imgs) {
+  for (const el of els) {
+    ctx.save();
+    if (el.opacity != null) ctx.globalAlpha *= el.opacity;
+    switch (el.type) {
+      case 'rect': rrPath(ctx, el.x, el.y, el.w, el.h, el.r); if (el.fill && el.fill !== 'none') { ctx.fillStyle = el.fill; ctx.fill(); } strokeIt(ctx, el); break;
+      case 'circle': ctx.beginPath(); ctx.arc(el.cx, el.cy, el.r, 0, Math.PI * 2); if (el.fill && el.fill !== 'none') { ctx.fillStyle = el.fill; ctx.fill(); } strokeIt(ctx, el); break;
+      case 'line': ctx.beginPath(); ctx.moveTo(el.x1, el.y1); ctx.lineTo(el.x2, el.y2); strokeIt(ctx, el); break;
+      case 'path': {
+        ctx.translate(el.tx || 0, el.ty || 0); ctx.scale(el.s || 1, el.s || 1);
+        const p = new Path2D(el.d);
+        if (el.fill && el.fill !== 'none') { ctx.fillStyle = el.fill; ctx.fill(p, el.rule || 'nonzero'); }
+        if (el.stroke) { ctx.strokeStyle = el.stroke; ctx.lineWidth = el.sw; ctx.lineCap = el.cap || 'butt'; ctx.lineJoin = 'round'; ctx.stroke(p); }
+        break;
+      }
+      case 'image': { const im = imgs.get(el.src); if (im) ctx.drawImage(im, el.x, el.y, el.w, el.h); break; }
+      case 'text': {
+        const f = el.f;
+        ctx.font = fontStr(f); ctx.fillStyle = el.fill; ctx.textBaseline = 'alphabetic';
+        if (HAS_LS) ctx.letterSpacing = `${f.ls || 0}px`;
+        for (const l of el.lines) ctx.fillText(l.s, l.x, l.y);
+        break;
+      }
+      case 'group': {
+        if (el.ops) for (const [k, a, b] of el.ops) { if (k === 'translate') ctx.translate(a, b); else if (k === 'scale') ctx.scale(a, b == null ? a : b); else if (k === 'rotate') ctx.rotate((a * Math.PI) / 180); }
+        if (el.clip) { const c = el.clip; rrPath(ctx, c.x, c.y, c.w, c.h, c.r); ctx.clip(); }
+        if (el.shadow) { const s = el.shadow; ctx.shadowColor = s.color; ctx.shadowBlur = s.blur; ctx.shadowOffsetX = s.dx; ctx.shadowOffsetY = s.dy; }
+        drawEls(ctx, el.children, imgs);
+        break;
+      }
+    }
+    ctx.restore();
+  }
+}
+async function renderCanvas(page, scale) {
+  await fontsReady();
+  const srcs = [...collectSrc(page.els, new Set())];
+  const imgs = new Map();
+  await Promise.all(srcs.map(async (s) => imgs.set(s, await getImg(s))));
+  const c = document.createElement('canvas');
+  c.width = Math.round(W * scale); c.height = Math.round(H * scale);
+  const ctx = c.getContext('2d');
+  ctx.scale(scale, scale);
+  drawEls(ctx, page.els, imgs);
+  return c;
+}
+const toBlob = (c, type, q) => new Promise((res) => c.toBlob(res, type, q));
+
+/* ---------- files: zip & pdf ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC_T[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files) {
+  const enc = new TextEncoder(), parts = [], central = [];
+  const now = new Date();
+  const time = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+  const date = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  let offset = 0;
+  for (const f of files) {
+    const name = enc.encode(f.name), crc = crc32(f.data), size = f.data.length;
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, time, true); lh.setUint16(12, date, true); lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true);
+    lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), name, f.data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, time, true); ch.setUint16(14, date, true); ch.setUint32(16, crc, true); ch.setUint32(20, size, true); ch.setUint32(24, size, true);
+    ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + size;
+  }
+  const cdSize = central.reduce((a, b) => a + b.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: 'application/zip' });
+}
+function makePdf(images, title) {
+  const enc = new TextEncoder(), chunks = []; let len = 0; const offs = [];
+  const push = (x) => { const u = typeof x === 'string' ? enc.encode(x) : x; chunks.push(u); len += u.length; };
+  const obj = (n, fn) => { offs[n] = len; push(`${n} 0 obj\n`); fn(); push('\nendobj\n'); };
+  const PW = 960, PH = 540, n = images.length, infoId = 3 + n * 3;
+  push('%PDF-1.4\n%âãÏÓ\n');
+  obj(1, () => push('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2, () => push(`<< /Type /Pages /Kids [${images.map((_, i) => `${3 + i * 3} 0 R`).join(' ')}] /Count ${n} >>`));
+  images.forEach((im, i) => {
+    const p = 3 + i * 3;
+    obj(p, () => push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /XObject << /Im${i} ${p + 1} 0 R >> >> /Contents ${p + 2} 0 R >>`));
+    obj(p + 1, () => { push(`<< /Type /XObject /Subtype /Image /Width ${im.w} /Height ${im.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${im.bytes.length} >>\nstream\n`); push(im.bytes); push('\nendstream'); });
+    const cs = `q ${PW} 0 0 ${PH} 0 0 cm /Im${i} Do Q`;
+    obj(p + 2, () => push(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
+  });
+  const hexTitle = [...('﻿' + title)].map((ch) => ch.charCodeAt(0).toString(16).padStart(4, '0')).join('');
+  obj(infoId, () => push(`<< /Title <${hexTitle}> /Producer (Brandbook) >>`));
+  const xref = len, total = infoId + 1;
+  push(`xref\n0 ${total}\n0000000000 65535 f \n`);
+  for (let i = 1; i < total; i++) push(String(offs[i]).padStart(10, '0') + ' 00000 n \n');
+  push(`trailer\n<< /Size ${total} /Root 1 0 R /Info ${infoId} 0 R >>\nstartxref\n${xref}\n%%EOF`);
+  return new Blob(chunks, { type: 'application/pdf' });
+}
+function tokensCss() {
+  const L = [`/* ${S.name}: цвета и шрифты из брендбука, ${S.year} */`];
+  L.push(`@import url("https://fonts.googleapis.com/css2?family=${S.head.family.replace(/ /g, '+')}:wght@${S.head.weight}&family=${S.body.family.replace(/ /g, '+')}:wght@${S.body.weight};${strongWeight(S.body.family, S.body.weight)}&display=swap");`, '', ':root {');
+  for (const [k, hex] of [['primary', D.P], ['accent', D.A], ['ink', D.K], ['paper', D.Wp]]) L.push(`  --color-${k}: ${hex}; /* ${D.names[k]} */`);
+  D.sp.steps.forEach((h, i) => L.push(`  --primary-${STEPS[i]}: ${h};`));
+  D.sa.steps.forEach((h, i) => L.push(`  --accent-${STEPS[i]}: ${h};`));
+  L.push(`  --color-text-muted: ${D.muted};`, `  --color-line: ${D.line};`, `  --color-on-primary: ${D.onP};`, `  --color-on-accent: ${D.onA};`);
+  L.push(`  --font-head: ${famCss(S.head.family)};`, `  --font-head-weight: ${S.head.weight};`, `  --font-body: ${famCss(S.body.family)};`, `  --font-body-weight: ${S.body.weight};`, '}');
+  return L.join('\n');
+}
+function tokensJson() {
+  const c = (v, d) => ({ $value: v, $type: 'color', ...(d ? { $description: d } : {}) });
+  const sc = (s) => Object.fromEntries(s.steps.map((h, i) => [STEPS[i], c(h)]));
+  return JSON.stringify({
+    color: { primary: c(D.P, D.names.primary), accent: c(D.A, D.names.accent), ink: c(D.K, D.names.ink), paper: c(D.Wp, D.names.paper), 'text-muted': c(D.muted), line: c(D.line) },
+    scale: { primary: sc(D.sp), accent: sc(D.sa) },
+    font: { head: { $type: 'fontFamily', $value: S.head.family }, body: { $type: 'fontFamily', $value: S.body.family } },
+  }, null, 2);
+}
+
+/* ---------- saving files ---------- */
+let dlPromise = null;
+function downloadsNS() { if (!dlPromise) dlPromise = window.claude && window.claude.use ? window.claude.use('downloads').catch(() => null) : Promise.resolve(null); return dlPromise; }
+downloadsNS();
+async function saveFile(name, blob) {
+  const ns = await downloadsNS();
+  if (ns) {
+    try { await ns.save({ filename: name, data: blob }); toast('Сохранено: ' + name); }
+    catch (e) { if (e && e.code === 'declined') return; toast(e && e.code === 'rate_limited' ? 'Одно окно сохранения уже открыто' : 'Не получилось сохранить файл здесь'); }
+    return;
+  }
+  if (window.claude) { toast('В этом окне скачивание недоступно'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  toast('Скачано: ' + name);
+}
+async function copyText(text, okMsg) {
+  try { await navigator.clipboard.writeText(text); toast(okMsg); }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (_) { /* ignore */ }
+    ta.remove(); toast(ok ? okMsg : 'Буфер обмена недоступен. Скачай SVG файлом.');
+  }
+}
+let toastTimer;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+const fileBase = () => (S.name || 'Бренд').replace(/[\\/:*?"<>|]+/g, '').trim() || 'Бренд';
+const pageFile = (p, ext) => `${fileBase()} ${pad(p.no)} ${p.title}.${ext}`;
+
+/* ---------- fonts ready ---------- */
+function fontsReady() { return Promise.all([ensureFont(S.head.family), ensureFont(S.body.family)]).then(() => document.fonts.ready); }
+
+/* ---------- UI ---------- */
+const pagesEl = $('#pages');
+let PAGES_BUILT = [];
+function mountPages() {
+  const nav = $('#toc-nav');
+  nav.innerHTML = PAGES.map(([k, t], i) => `<a href="#p-${k}">${pad(i + 1)} ${esc(t)}</a>`).join('');
+  PAGES.forEach(([k, t], i) => {
+    const sec = document.createElement('section');
+    sec.className = 'page-card'; sec.id = 'p-' + k;
+    sec.innerHTML = `<div class="page-head"><h2><span>${pad(i + 1)}</span>${esc(t)}</h2><div class="page-acts">
+      <button class="btn small" type="button" data-act="png" data-k="${k}">PNG</button>
+      <button class="btn small" type="button" data-act="svg" data-k="${k}">SVG</button>
+      <button class="btn small" type="button" data-act="figma" data-k="${k}">Копировать для Фигмы</button></div></div>
+      <div class="sheet" data-sheet="${k}"></div>`;
+    pagesEl.appendChild(sec);
+  });
+}
+function render() {
+  mcache.clear();
+  PAGES_BUILT = buildPages();
+  for (const p of PAGES_BUILT) { const el = pagesEl.querySelector(`[data-sheet="${p.key}"]`); if (el) el.innerHTML = toSVG(p); }
+  $('#note').hidden = !isExample();
+  document.querySelectorAll('[data-cname]').forEach((inp) => { inp.placeholder = D.names[inp.dataset.cname]; });
+}
+let rTimer;
+function schedule() { clearTimeout(rTimer); rTimer = setTimeout(render, 120); }
+function refreshFonts() { fontsReady().then(() => { mcache.clear(); render(); }); }
+
+function fillForm() {
+  document.querySelectorAll('[data-k]').forEach((el) => { if (el.tagName !== 'BUTTON') el.value = S[el.dataset.k] || ''; });
+  document.querySelectorAll('[name="mark"]').forEach((r) => { r.checked = r.value === S.mark; });
+  for (const k of ['primary', 'accent', 'ink', 'paper']) {
+    $(`#c-${k}`).value = normHex(S.colors[k]).toLowerCase();
+    $(`#h-${k}`).value = normHex(S.colors[k]);
+    $(`#n-${k}`).value = S.cnames[k] || '';
+  }
+  fillFontSelects();
+  S.voice.forEach(([a, b], i) => { $(`#v-do-${i}`).value = a; $(`#v-dont-${i}`).value = b; });
+  updateLogoStatus();
+}
+function fillFontSelects() {
+  for (const role of ['head', 'body']) {
+    const fs = $(`#f-${role}-family`), ws = $(`#f-${role}-weight`);
+    fs.innerHTML = FONT_LIST.map(([f, , kind]) => `<option value="${esc(f)}"${f === S[role].family ? ' selected' : ''}>${esc(f)}${kind === 'custom' ? ' (свой)' : ''}</option>`).join('');
+    const weights = fontInfo(S[role].family)[1];
+    if (!weights.includes(S[role].weight)) S[role].weight = nearestWeight(S[role].family, S[role].weight);
+    const WN = { 300: 'Light 300', 400: 'Regular 400', 500: 'Medium 500', 600: 'SemiBold 600', 700: 'Bold 700', 800: 'ExtraBold 800', 900: 'Black 900' };
+    ws.innerHTML = weights.map((w) => `<option value="${w}"${w === S[role].weight ? ' selected' : ''}>${WN[w] || w}</option>`).join('');
+  }
+}
+function updateLogoStatus() {
+  const st = $('#logo-status'), clr = $('#btn-logo-clear');
+  if (S.logo) {
+    clr.hidden = false;
+    st.classList.toggle('warn', !!S.logo.opaque);
+    st.textContent = S.logo.kind === 'svg' ? 'Загружен SVG. Знак и надпись выше сейчас не используются.' : (S.logo.opaque ? 'У PNG непрозрачный фон, версии в один цвет выйдут плашкой. Лучше SVG или PNG с прозрачностью.' : 'Загружен PNG. Знак и надпись выше сейчас не используются.');
+  } else { clr.hidden = true; st.classList.remove('warn'); st.textContent = 'SVG лучше: из него получатся чистые версии в один цвет.'; }
+}
+function buildStaticFields() {
+  $('#marks').innerHTML = Object.keys(MARKS).map((k) => {
+    const shapes = (MARKS[k] || []).map((u) => (u.t === 'r' ? `<rect x="${u.x}" y="${u.y}" width="${u.w}" height="${u.h}" rx="${u.r}"/>` : u.t === 'c' ? `<circle cx="${u.cx}" cy="${u.cy}" r="${u.r}"/>` : `<path d="${u.d}"${u.rule ? ` fill-rule="${u.rule}"` : ''}/>`)).join('');
+    const icon = k === 'none' ? '<path d="M15 50H85" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>' : shapes;
+    return `<label title="${MARK_TITLES[k]}"><input type="radio" name="mark" value="${k}" aria-label="${MARK_TITLES[k]}"><svg viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">${icon}</svg></label>`;
+  }).join('');
+  const roles = [['primary', 'Основной'], ['accent', 'Акцент'], ['ink', 'Текст'], ['paper', 'Фон']];
+  $('#color-fields').innerHTML = roles.map(([k, lab]) => `<div class="f"><span class="lab" id="lab-${k}">${lab}</span><div class="color-row">
+      <input type="color" id="c-${k}" aria-labelledby="lab-${k}"><input type="text" class="hex" id="h-${k}" maxlength="7" aria-label="${lab}, HEX" spellcheck="false">
+      <input type="text" id="n-${k}" data-cname="${k}" aria-label="${lab}, название"></div></div>`).join('');
+  $('#voice-fields').innerHTML = [0, 1, 2].map((i) => `<div class="pair">
+      <label class="f"><span>Пишем так, пример ${i + 1}</span><textarea id="v-do-${i}" rows="2"></textarea></label>
+      <label class="f"><span>Не пишем так</span><textarea id="v-dont-${i}" rows="2"></textarea></label></div>`).join('');
+}
+function bind() {
+  document.querySelectorAll('input[data-k], textarea[data-k]').forEach((el) => el.addEventListener('input', () => { S[el.dataset.k] = el.value; save(); schedule(); }));
+  $('#marks').addEventListener('change', (e) => { if (e.target.name === 'mark') { S.mark = e.target.value; save(); schedule(); } });
+  for (const k of ['primary', 'accent', 'ink', 'paper']) {
+    const c = $(`#c-${k}`), h = $(`#h-${k}`), n = $(`#n-${k}`);
+    c.addEventListener('input', () => { S.colors[k] = normHex(c.value); h.value = S.colors[k]; save(); schedule(); colorsChanged(); });
+    h.addEventListener('input', () => { if (hexOk(h.value)) { S.colors[k] = normHex(h.value); c.value = S.colors[k].toLowerCase(); save(); schedule(); colorsChanged(); } });
+    h.addEventListener('blur', () => { h.value = normHex(S.colors[k]); });
+    n.addEventListener('input', () => { S.cnames[k] = n.value; save(); schedule(); });
+  }
+  for (const role of ['head', 'body']) {
+    $(`#f-${role}-family`).addEventListener('change', (e) => { S[role].family = e.target.value; S[role].weight = nearestWeight(S[role].family, S[role].weight); fillFontSelects(); save(); render(); refreshFonts(); });
+    $(`#f-${role}-weight`).addEventListener('change', (e) => { S[role].weight = Number(e.target.value); save(); render(); refreshFonts(); });
+  }
+  S.voice.forEach((_, i) => {
+    $(`#v-do-${i}`).addEventListener('input', (e) => { S.voice[i][0] = e.target.value; save(); schedule(); });
+    $(`#v-dont-${i}`).addEventListener('input', (e) => { S.voice[i][1] = e.target.value; save(); schedule(); });
+  });
+  $('#f-logo').addEventListener('change', async (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) await takeLogoFile(f); });
+  $('#f-svgcode').addEventListener('input', async (e) => {
+    const v = e.target.value.trim(); if (!v.startsWith('<')) return;
+    try { S.logo = parseSvg(v); await logoChanged(); toast('Логотип из кода подставлен'); } catch (err) { /* wait until the code is complete */ }
+  });
+  $('#btn-logo-clear').addEventListener('click', async () => { S.logo = null; $('#f-svgcode').value = ''; await logoChanged(); });
+  $('#f-font').addEventListener('change', async (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) await takeFontFile(f); });
+  pagesEl.addEventListener('click', onPageAction);
+  $('#btn-pdf').addEventListener('click', exportPdf);
+  $('#btn-zip').addEventListener('click', exportZip);
+  const reset = $('#btn-reset'); let armed = 0;
+  reset.addEventListener('click', async () => {
+    if (!armed) { armed = setTimeout(() => { armed = 0; reset.classList.remove('armed'); reset.textContent = 'Сбросить к примеру'; }, 3500); reset.classList.add('armed'); reset.textContent = 'Нажми ещё раз, чтобы стереть'; return; }
+    clearTimeout(armed); armed = 0; reset.classList.remove('armed'); reset.textContent = 'Сбросить к примеру';
+    S = clone(DEFAULTS); try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ }
+    fillForm(); await logoChanged(); refreshFonts(); toast('Вернул пример');
+  });
+  document.addEventListener('dragover', (e) => { if ([...(e.dataTransfer?.items || [])].some((i) => i.kind === 'file')) e.preventDefault(); });
+  document.addEventListener('drop', async (e) => {
+    const f = e.dataTransfer?.files?.[0]; if (!f) return; e.preventDefault();
+    if (/\.(ttf|otf|woff2?)$/i.test(f.name)) await takeFontFile(f); else await takeLogoFile(f);
+  });
+}
+let colorTimer;
+function colorsChanged() { if (!S.logo) return; clearTimeout(colorTimer); colorTimer = setTimeout(async () => { await buildLogoVariants(); render(); }, 250); }
+async function logoChanged() { save(); updateLogoStatus(); await buildLogoVariants(); render(); }
+async function takeLogoFile(f) {
+  try {
+    if (/svg/i.test(f.type) || /\.svg$/i.test(f.name)) { S.logo = parseSvg(await f.text()); }
+    else if (/^image\//.test(f.type)) {
+      const src = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+      const img = await loadImage(src);
+      const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight; const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+      const px = (a, b) => x.getImageData(a, b, 1, 1).data[3];
+      const opaque = [px(0, 0), px(c.width - 1, 0), px(0, c.height - 1), px(c.width - 1, c.height - 1)].every((a) => a > 250);
+      S.logo = { kind: 'raster', src, w: img.naturalWidth, h: img.naturalHeight, opaque };
+    } else { toast('Нужен SVG, PNG или WebP'); return; }
+    await logoChanged(); toast('Логотип подставлен на все страницы');
+  } catch (e) { toast('Не удалось прочитать файл. Пересохрани логотип в SVG или PNG.'); }
+}
+let customN = 0;
+async function takeFontFile(f) {
+  try {
+    const buf = await f.arrayBuffer();
+    const fam = f.name.replace(/\.(ttf|otf|woff2?)$/i, '').replace(/[^\p{L}\p{N} _-]+/gu, ' ').trim() || 'Свой шрифт ' + (++customN);
+    const face = new FontFace(fam, buf, { weight: '100 900' });
+    await face.load(); document.fonts.add(face);
+    if (!FONT_LIST.some((x) => x[0] === fam)) FONT_LIST.unshift([fam, [400, 500, 600, 700], 'custom']);
+    S.head.family = fam; S.head.weight = nearestWeight(fam, S.head.weight);
+    fillFontSelects(); save(); mcache.clear(); render();
+    toast(`Шрифт «${fam}» стоит в заголовках. Для текста выбери его во втором списке.`);
+  } catch (e) { toast('Этот файл шрифта не читается'); }
+}
+async function onPageAction(e) {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const p = PAGES_BUILT.find((x) => x.key === b.dataset.k); if (!p) return;
+  const act = b.dataset.act;
+  if (act === 'figma') { await copyText(toSVG(p), 'SVG в буфере. В Фигме нажми Ctrl+V'); return; }
+  if (act === 'svg') { await saveFile(pageFile(p, 'svg'), new Blob([toSVG(p)], { type: 'image/svg+xml' })); return; }
+  if (act === 'png') { b.disabled = true; try { const c = await renderCanvas(p, 1.2); await saveFile(pageFile(p, 'png'), await toBlob(c, 'image/png')); } finally { b.disabled = false; } }
+}
+async function busy(btn, label, fn) { const old = btn.textContent; btn.disabled = true; btn.textContent = label; try { await fn(); } catch (e) { toast('Что-то пошло не так при сборке файла'); } finally { btn.disabled = false; btn.textContent = old; } }
+async function exportPdf() {
+  await busy($('#btn-pdf'), 'Собираю PDF…', async () => {
+    const pages = buildPages(); const imgs = [];
+    for (const p of pages) { const c = await renderCanvas(p, 1.2); const blob = await toBlob(c, 'image/jpeg', 0.92); imgs.push({ bytes: new Uint8Array(await blob.arrayBuffer()), w: c.width, h: c.height }); }
+    await saveFile(`${fileBase()} брендбук.pdf`, makePdf(imgs, `${S.name}: брендбук`));
+  });
+}
+async function exportZip() {
+  await busy($('#btn-zip'), 'Собираю архив…', async () => {
+    const pages = buildPages(), enc = new TextEncoder(), files = [];
+    for (const p of pages) {
+      const c = await renderCanvas(p, 1.2);
+      files.push({ name: `png/${pad(p.no)} ${p.title}.png`, data: new Uint8Array(await (await toBlob(c, 'image/png')).arrayBuffer()) });
+      files.push({ name: `svg/${pad(p.no)} ${p.title}.svg`, data: enc.encode(toSVG(p)) });
+    }
+    files.push({ name: 'tokens.css', data: enc.encode(tokensCss()) });
+    files.push({ name: 'tokens.json', data: enc.encode(tokensJson()) });
+    files.push({ name: 'readme.txt', data: enc.encode([`${S.name}: брендбук, ${S.year}`, '', 'png/  страницы 1920 × 1080 для показа и отправки', 'svg/  те же страницы для Фигмы: открой файл или перетащи его на холст', 'tokens.css  цвета, шкалы и шрифты для сайта', 'tokens.json  те же токены в формате DTCG для Tokens Studio', '', `Шрифты: ${S.head.family} и ${S.body.family}.`].join('\n')) });
+    await saveFile(`${fileBase()} брендбук.zip`, makeZip(files));
+  });
+}
+
+/* ---------- boot ---------- */
+buildStaticFields();
+mountPages();
+fillForm();
+bind();
+render();
+buildLogoVariants().then(render);
+refreshFonts();
+})();
+</script>
+</body></html>

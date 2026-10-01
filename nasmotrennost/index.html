@@ -1,0 +1,704 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Насмотренность</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a design-review desk. Two proofs side by side under a scoreboard; after the answer the worse proof gets red-pen redlines in Figma's measurement colour. */
+:root{
+  --bg:#EEF0F3;
+  --panel:#FFFFFF;
+  --stage:#E3E6EA;
+  --ink:#121417;
+  --muted:#5B626B;
+  --line:#D8DCE1;
+  --pen:#F24822;
+  --ok:#12804A;
+  --ok-soft:#E2F3E9;
+  --bad:#CC2B2B;
+  --bad-soft:#FBE6E6;
+  --font:"Geologica", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0F1114;--panel:#171A1E;--stage:#22262B;--ink:#ECEEF0;--muted:#9AA1A9;--line:#2B3036;--pen:#FF6B42;--ok:#45D18F;--ok-soft:#14301F;--bad:#FF7070;--bad-soft:#3A1B1B;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0F1114;--panel:#171A1E;--stage:#22262B;--ink:#ECEEF0;--muted:#9AA1A9;--line:#2B3036;--pen:#FF6B42;--ok:#45D18F;--ok-soft:#14301F;--bad:#FF7070;--bad-soft:#3A1B1B;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:24px;padding-block:24px 64px}
+@media (max-width:640px){.wrap{padding-inline:16px;padding-block:16px 48px}}
+:focus-visible{outline:2px solid var(--pen);outline-offset:3px}
+
+.bar{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between}
+.bar h1{margin:0;font-size:clamp(28px,4vw,40px);line-height:1.05;font-weight:700;letter-spacing:-0.025em}
+.bar p{margin:8px 0 0;color:var(--muted);max-width:56ch;text-wrap:pretty}
+.stats{display:flex;gap:6px;margin:0;flex-wrap:wrap}
+.stats div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;min-width:84px}
+.stats dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stats dd{margin:2px 0 0;font:600 22px/1.15 var(--mono);font-variant-numeric:tabular-nums}
+.progress{height:4px;background:var(--line);border-radius:4px;margin:20px 0 22px;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:var(--ink);border-radius:4px;transition:width .3s}
+
+.q{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:14px}
+.q h2{margin:0;font-size:22px;font-weight:600;letter-spacing:-0.01em;margin-right:auto}
+.chip{font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 11px;font-weight:500}
+.lvl{font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.1em}
+.keys{font:500 12px/1 var(--mono);color:var(--muted)}
+.keys kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:3px 6px;background:var(--panel);color:var(--ink);font:inherit}
+@media (hover:none){.keys{display:none}}
+
+.duel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:760px){.duel{grid-template-columns:minmax(0,1fr)}}
+.opt{position:relative;display:grid;grid-template-rows:auto 1fr;background:var(--panel);border:2px solid var(--line);border-radius:18px;cursor:pointer;overflow:hidden;text-align:left;transition:border-color .15s,transform .15s}
+.opt:hover{border-color:var(--ink)}
+.opt[aria-disabled="true"]{cursor:default}
+.opt[aria-disabled="true"]:hover{border-color:var(--line)}
+.opt.is-ok,.opt.is-ok:hover{border-color:var(--ok)}
+.opt.is-bad,.opt.is-bad:hover{border-color:var(--bad)}
+.opt-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 0}
+.letter{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--panel);font-weight:600;font-size:16px}
+.verdict{font-size:13px;font-weight:600;border-radius:999px;padding:5px 11px;visibility:hidden}
+.opt.is-ok .verdict{visibility:visible;background:var(--ok-soft);color:var(--ok)}
+.opt.is-bad .verdict{visibility:visible;background:var(--bad-soft);color:var(--bad)}
+.stage{display:grid;place-items:center;padding:20px 14px 26px;min-height:300px;overflow:hidden}
+.host{zoom:1}
+@media (min-width:1080px){.host{zoom:1.12}}
+@media (max-width:380px){.host{zoom:.92}}
+
+.explain{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:grid;gap:10px}
+.ex-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.res{font-size:13px;font-weight:600;border-radius:999px;padding:5px 11px}
+.res.ok{background:var(--ok-soft);color:var(--ok)}
+.res.bad{background:var(--bad-soft);color:var(--bad)}
+.explain h3{margin:0;font-size:22px;line-height:1.2;letter-spacing:-0.01em;text-wrap:balance}
+.explain p{margin:0;max-width:68ch;text-wrap:pretty}
+.review{display:grid;gap:4px;border-top:1px dashed var(--line);padding-top:12px}
+.review span{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.review em{font-style:normal}
+.ex-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:6px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:11px;border:1px solid var(--ink);background:var(--ink);color:var(--panel);font:600 15px/1 var(--font);padding:13px 20px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.hint{font:500 12px/1 var(--mono);color:var(--muted)}
+
+.summary{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:28px;display:grid;gap:22px}
+.sum-top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 28px}
+.big{font:700 clamp(64px,10vw,104px)/0.9 var(--font);letter-spacing:-0.04em;font-variant-numeric:tabular-nums}
+.big small{font-size:.35em;color:var(--muted);letter-spacing:0;font-weight:500}
+.sum-top h2{margin:0;font-size:26px;letter-spacing:-0.01em}
+.sum-top p{margin:6px 0 0;color:var(--muted);max-width:52ch}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px 24px}
+.cat-row{display:grid;gap:6px}
+.cat-row header{display:flex;justify-content:space-between;font-size:14px}
+.cat-row header b{font-weight:500}
+.cat-row header span{font:500 13px/1.4 var(--mono);color:var(--muted)}
+.meter{height:8px;background:var(--stage);border-radius:6px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ink);border-radius:6px}
+.missed h3{margin:0 0 8px;font-size:17px}
+.missed ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.missed li{display:grid;gap:2px;padding:10px 14px;border:1px solid var(--line);border-radius:12px}
+.missed li b{font-weight:600}
+.missed li span{color:var(--muted);font-size:14px;line-height:1.45}
+.missed li small{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- mock UI kit (the proofs) ---------- */
+.mk{--a:#3D5AFE;--ink:#16181D;--mut:#5F6670;--bgm:#F4F5F7;--sur:#FFFFFF;--ln:#E3E6EA;position:relative;width:320px;color:var(--ink);font:14px/1.45 "Inter",system-ui,sans-serif;text-align:left;letter-spacing:0}
+.mk *{box-sizing:border-box}
+.mk p{margin:0}
+.mk .card{background:var(--sur);border-radius:16px;padding:20px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 6px 16px rgba(16,24,40,.07)}
+.mk .h{font-size:20px;line-height:1.25;font-weight:650;letter-spacing:-.01em}
+.mk .h3{font-size:16px;line-height:1.3;font-weight:650}
+.mk .t{color:var(--mut)}
+.mk .sm{font-size:12.5px}
+.mk .lbl{font-size:13px;line-height:1.3;color:var(--mut);font-weight:500}
+.mk .inp{height:44px;border:1px solid var(--ln);border-radius:10px;padding:0 12px;display:flex;align-items:center;background:#fff;color:var(--ink)}
+.mk .ph{color:#9AA1AA}
+.mk .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 18px;border-radius:10px;background:var(--a);color:#fff;font-weight:600;white-space:nowrap}
+.mk .btn2{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 18px;border-radius:10px;border:1px solid var(--ln);background:#fff;color:var(--ink);font-weight:600;white-space:nowrap}
+.mk .full{width:100%}
+.mk .row{display:flex;align-items:center;gap:10px}
+.mk .img{height:140px;border-radius:12px;background:radial-gradient(120% 90% at 85% 10%,color-mix(in oklab,var(--a) 55%,#fff) 0 30%,transparent 31%),linear-gradient(135deg,color-mix(in oklab,var(--a) 22%,#fff),color-mix(in oklab,var(--a) 45%,#fff))}
+.mk .ava{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,color-mix(in oklab,var(--a) 35%,#fff),color-mix(in oklab,var(--a) 70%,#fff));flex:none}
+.mk .ic{width:20px;height:20px;flex:none;color:var(--ink)}
+.mk .tag{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--a);background:color-mix(in oklab,var(--a) 12%,#fff);padding:4px 8px;border-radius:6px}
+.mk .sep{height:1px;background:var(--ln)}
+.mk .tog{width:40px;height:24px;border-radius:12px;background:var(--a);position:relative;flex:none}
+.mk .tog::after{content:"";position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:#fff}
+.mk .tog.off{background:#D5D9DE}
+.mk .tog.off::after{right:auto;left:3px}
+.mk .chev{margin-left:auto;color:#A3A9B1}
+.mk .num{font-variant-numeric:tabular-nums}
+.ov{position:absolute;inset:0;pointer-events:none;z-index:5}
+.ov .ln{position:absolute;background:var(--pen)}
+.ov .lab{position:absolute;transform:translate(-50%,-50%);background:var(--pen);color:#fff;font:600 10.5px/1 "JetBrains Mono",monospace;padding:3px 5px;border-radius:4px;white-space:nowrap}
+.ov .box{position:absolute;border:2px solid var(--pen);border-radius:8px;box-shadow:0 0 0 3px color-mix(in oklab,var(--pen) 22%,transparent)}
+.ov .guide{position:absolute;width:0;border-left:1.5px dashed var(--pen)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion: reduce){.progress span,.opt{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div>
+      <h1>Насмотренность</h1>
+      <p>Два варианта одного экрана. Выбери тот, что сделан лучше. После ответа покажу, что не так с другим, и как сказать об этом на ревью.</p>
+    </div>
+    <dl class="stats">
+      <div><dt>Раунд</dt><dd id="s-round">1/15</dd></div>
+      <div><dt>Верно</dt><dd id="s-score">0</dd></div>
+      <div><dt>Серия</dt><dd id="s-streak">0</dd></div>
+      <div><dt>Рекорд</dt><dd id="s-best">0</dd></div>
+    </dl>
+  </header>
+  <div class="progress" aria-hidden="true"><span id="prog"></span></div>
+
+  <section id="round" aria-live="polite">
+    <div class="q">
+      <span class="chip" id="cat">Отступы</span>
+      <span class="lvl" id="lvl" title="Сложность">●○○</span>
+      <h2>Где сделано лучше?</h2>
+      <span class="keys"><kbd>←</kbd> А · Б <kbd>→</kbd> · дальше <kbd>Enter</kbd></span>
+    </div>
+    <div class="duel">
+      <div class="opt" id="opt-a" role="button" tabindex="0" aria-label="Вариант А">
+        <div class="opt-top"><span class="letter" aria-hidden="true">А</span><span class="verdict" id="v-a"></span></div>
+        <div class="stage"><div class="host" id="host-a"></div></div>
+      </div>
+      <div class="opt" id="opt-b" role="button" tabindex="0" aria-label="Вариант Б">
+        <div class="opt-top"><span class="letter" aria-hidden="true">Б</span><span class="verdict" id="v-b"></span></div>
+        <div class="stage"><div class="host" id="host-b"></div></div>
+      </div>
+    </div>
+    <div class="explain" id="explain" hidden>
+      <div class="ex-head"><span class="res" id="res"></span><h3 id="ex-title"></h3></div>
+      <p id="ex-why"></p>
+      <div class="review"><span>Как сказать на ревью</span><em id="ex-review"></em></div>
+      <div class="ex-actions"><button class="btn" id="next" type="button">Дальше</button><span class="hint">или Enter</span></div>
+    </div>
+  </section>
+
+  <section class="summary" id="summary" hidden aria-live="polite">
+    <div class="sum-top">
+      <div class="big" id="sum-score">0<small>/15</small></div>
+      <div><h2 id="sum-title"></h2><p id="sum-text"></p></div>
+    </div>
+    <div class="cats" id="sum-cats"></div>
+    <div class="missed" id="sum-missed"></div>
+    <div class="ex-actions"><button class="btn" id="again" type="button">Ещё 15 раундов</button><span class="hint" id="sum-best"></span></div>
+  </section>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const ROUNDS = 15;
+const PLAN = [1, 1, 1, 2, 1, 2, 2, 2, 2, 3, 2, 3, 3, 2, 3];
+
+/* ---------- random content ---------- */
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const rint = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const rub = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+const ACCENTS = ['#3D5AFE', '#0E8A62', '#7048E8', '#D9480F', '#0B7285', '#C2255C', '#1C7ED6'];
+const PRODUCTS = [['Кофемолка ручная', 'Керамические жернова, 25 г кофе за раз'], ['Рюкзак городской', 'Не промокает, есть отделение для ноутбука'], ['Термокружка', '450 мл, держит тепло шесть часов'], ['Настольная лампа', 'Тёплый свет и три режима яркости'], ['Беговые кроссовки', 'Лёгкая подошва, 230 г на пару'], ['Наушники', 'До 30 часов без подзарядки']];
+const PEOPLE = [['Анна Котова', 'Продуктовый дизайнер'], ['Илья Смирнов', 'Арт-директор'], ['Марина Лис', 'Фронтенд-разработчица'], ['Олег Брагин', 'Маркетолог'], ['Вера Ким', 'UX-исследовательница']];
+const ARTICLES = ['Как мы переписали онбординг и подняли активацию', 'Пять ошибок в первом портфолио', 'Зачем дизайнеру считать метрики', 'Дизайн-ревью без обид'];
+const TASKS = ['Собрать мудборд', 'Показать черновик клиенту', 'Поправить сетку', 'Выгрузить ассеты', 'Написать тексты кнопок', 'Проверить тёмную тему'];
+const SETTINGS = ['Уведомления', 'Тёмная тема', 'Язык', 'Конфиденциальность', 'Резервные копии'];
+const FEATURES = ['Безлимитные проекты', 'Совместная работа', 'История версий', 'Экспорт в PDF', 'Поддержка в чате'];
+
+/* ---------- small helpers for mocks ---------- */
+const mk = (inner, acc, style) => `<div class="mk" style="--a:${acc};${style || ''}">${inner}</div>`;
+const card = (inner, style, attrs) => `<div class="card" style="${style || ''}" ${attrs || ''}>${inner}</div>`;
+const ICONS = {
+  bell: '<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  moon: '<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  cloud: '<path d="M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"/>',
+  home: '<path d="M4 11l8-7 8 7v9H4z"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  heart: '<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+  trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+};
+const icon = (n, o) => { o = o || {}; return `<svg class="ic" viewBox="0 0 24 24" fill="${o.fill ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="${o.fill ? 0 : 1.8}" stroke-linecap="round" stroke-linejoin="round" ${o.attrs || ''} style="${o.style || ''}">${ICONS[n]}</svg>`; };
+function lum(hex) { const n = parseInt(hex.slice(1), 16); const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+const ratio = (a, b) => { const x = lum(a), y = lum(b); return ((Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05)).toFixed(1).replace('.', ','); };
+
+/* ---------- challenges ----------
+   each make(acc) returns { good, bad, marks, why? }
+   marks: gap (vertical distance a→b), gapH, padL/padR (box→child), edge (left edges of a and b), box (outline) */
+const C = [];
+const add = (o) => C.push(o);
+
+// ===== Отступы
+add({ id: 'label-prox', cat: 'Отступы', lvl: 1, title: 'Подпись ближе к своему полю',
+  why: 'Когда подпись стоит посередине между полями, непонятно, к какому из них она относится. До своего поля расстояние должно быть заметно меньше, чем до соседнего.',
+  review: '«Подписи висят между полями. Давай прижмём их к инпутам, а между парами оставим больше воздуха»',
+  make(acc) {
+    const f = (lab, val, g1, g2, k) => `<div style="margin-bottom:${g2}px"><div class="lbl" data-m="${k}l" style="margin-bottom:${g1}px">${lab}</div><div class="inp" data-m="${k}i">${val}</div></div>`;
+    const v = (g1, g2) => mk(card(`<p class="h" style="margin-bottom:18px">Вход в кабинет</p>${f('Почта', 'anna@example.com', g1, g2, 'a')}${f('Пароль', '••••••••••', g1, g2, 'b')}<div class="btn full" style="margin-top:4px">Войти</div>`), acc);
+    return { good: v(6, 20), bad: v(14, 14), marks: [{ t: 'gap', a: 'al', b: 'ai' }, { t: 'gap', a: 'ai', b: 'bl' }] };
+  } });
+add({ id: 'card-pad', cat: 'Отступы', lvl: 2, title: 'Равные поля внутри карточки',
+  why: 'Слева отступ меньше, чем справа, и содержимое выглядит прижатым к краю. Горизонтальные отступы внутри карточки делают одинаковыми.',
+  review: '«Слева паддинг 10, справа 20. Приведём к одному значению из сетки»',
+  make(acc) {
+    const [n, d] = pick(PRODUCTS), price = rint(19, 89) * 100 - 10;
+    const v = (pl) => mk(card(`<div class="img" style="margin-bottom:14px"></div><p class="h3" data-m="t">${n}</p><p class="t" style="margin:4px 0 14px">${d}</p><div class="row" style="justify-content:space-between"><b style="font-size:18px">${rub(price)}</b><div class="btn">В корзину</div></div>`, `padding:20px 20px 20px ${pl}px`, 'data-m="c"'), acc);
+    return { good: v(20), bad: v(10), marks: [{ t: 'padL', box: 'c', child: 't' }, { t: 'padR', box: 'c', child: 't' }] };
+  } });
+add({ id: 'list-rhythm', cat: 'Отступы', lvl: 2, title: 'Один ритм в списке',
+  why: 'Между пунктами одинаковые расстояния, кроме одного места. Глаз принимает такой разрыв за границу между группами и ищет, чем пункты отличаются.',
+  review: '«В одном месте шаг сбился, и список распался на две группы»',
+  make(acc) {
+    const items = shuffle(TASKS).slice(0, 5), badI = rint(2, 3);
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:14px">Задачи на сегодня</p>${items.map((t, i) => `<div class="row" data-m="i${i}" style="margin-top:${i === 0 ? 0 : (bad && i === badI ? 22 : 10)}px">${icon('check', { style: 'color:var(--a)' })}<span>${t}</span></div>`).join('')}`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'gap', a: `i${badI - 2}`, b: `i${badI - 1}` }, { t: 'gap', a: `i${badI - 1}`, b: `i${badI}` }] };
+  } });
+add({ id: 'btn-air', cat: 'Отступы', lvl: 1, title: 'Кнопке нужен воздух',
+  why: 'Текст почти касается краёв кнопки. Она выглядит тесной, и в неё трудно попасть пальцем: удобная высота нажатия начинается примерно с 44 px.',
+  review: '«Кнопка тесная и ниже 44 px, на телефоне по ней будут промахиваться»',
+  make(acc) {
+    const v = (bad) => mk(card(`<span class="tag">Новое</span><p class="h" style="margin:10px 0 6px">Подписка на рассылку</p><p class="t" style="margin-bottom:16px">Раз в неделю присылаем разборы портфолио и вакансии в продуктовый дизайн.</p><div class="btn" data-m="b" style="${bad ? 'height:28px;padding:0 6px;border-radius:6px;font-size:13px' : ''}">Подписаться</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'b' }] };
+  } });
+add({ id: 'head-prox', cat: 'Отступы', lvl: 2, title: 'Подзаголовок ближе к своему тексту',
+  why: 'Подзаголовок прилип к прошлому абзацу и оторвался от своего. Над заголовком расстояние должно быть больше, чем под ним, тогда понятно, что он открывает новый блок.',
+  review: '«Подзаголовок читается как хвост прошлого блока. Отступ сверху увеличим, снизу уменьшим»',
+  make(acc) {
+    const v = (top, bot) => mk(card(`<p class="h" style="margin-bottom:8px">Доставка</p><p class="t" data-m="p1">Привезём в течение дня, если заказать до 14:00. Курьер позвонит за час.</p><p class="h3" data-m="h2" style="margin:${top}px 0 ${bot}px">Возврат</p><p class="t" data-m="p2">Вернуть товар можно в течение 14 дней. Деньги придут на карту за 3 дня.</p>`), acc);
+    return { good: v(22, 6), bad: v(6, 22), marks: [{ t: 'gap', a: 'p1', b: 'h2' }, { t: 'gap', a: 'h2', b: 'p2' }] };
+  } });
+add({ id: 'btn-vcenter', cat: 'Отступы', lvl: 3, title: 'Текст по центру кнопки',
+  why: 'Сверху отступ меньше, чем снизу, и надпись сидит высоко. По отдельности это мелочь, но из таких мелочей складывается ощущение небрежности.',
+  review: '«Текст в кнопке смещён вверх на пару пикселей, проверь вертикальные паддинги»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:6px">Пробный период</p><p class="t" style="margin-bottom:16px">14 дней бесплатно, карту можно не привязывать.</p><div class="btn full" data-m="b" style="height:auto;padding:${bad ? '9px 18px 15px' : '12px 18px'};line-height:20px">Начать бесплатно</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'b' }] };
+  } });
+add({ id: 'icon-gap', cat: 'Отступы', lvl: 3, title: 'Зазор между иконкой и текстом',
+  why: 'Иконки почти слиплись с подписями. Небольшой зазор, обычно 8–12 px, показывает, что это два элемента одной строки.',
+  review: '«Иконкам не хватает зазора до текста, сейчас они сливаются»',
+  make(acc) {
+    const rows = [['home', 'Главная'], ['search', 'Поиск'], ['heart', 'Избранное'], ['user', 'Профиль']];
+    const v = (g) => mk(card(rows.map(([i, l], k) => `<div class="row" style="gap:${g}px;padding:9px 0"><span data-m="ic${k}" style="display:flex">${icon(i)}</span><span data-m="tx${k}">${l}</span></div>`).join(''), 'padding:12px 20px'), acc);
+    return { good: v(12), bad: v(3), marks: [{ t: 'gapH', a: 'ic1', b: 'tx1' }] };
+  } });
+add({ id: 'row-height', cat: 'Отступы', lvl: 2, title: 'Одна высота в одной строке',
+  why: 'Поле и кнопка стоят рядом, но разной высоты. Элементы в одной строке делают одной высоты, иначе строка выглядит собранной из разных наборов.',
+  review: '«Кнопка ниже инпута на 8 px. Сделаем обе по 44»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h3" style="margin-bottom:12px">Найти курс</p><div class="row" style="gap:8px"><div class="inp" data-m="i" style="flex:1"><span class="ph">Например, Фигма</span></div><div class="btn" data-m="b" style="${bad ? 'height:36px' : ''}">Найти</div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'b' }] };
+  } });
+
+// ===== Выравнивание
+add({ id: 'left-edge', cat: 'Выравнивание', lvl: 1, title: 'Общий левый край',
+  why: 'Кнопка отъехала от линии, по которой выровнен текст. Когда у блоков один край, макет выглядит собранным.',
+  review: '«Кнопка не встаёт на общую ось с текстом, её сдвинуло на 12 px»',
+  make(acc) {
+    const v = (off) => mk(card(`<p class="h" data-m="t" style="margin-bottom:6px">Портфолио готово</p><p class="t" style="margin-bottom:16px">Мы собрали четыре кейса в один PDF. Проверьте, всё ли на месте.</p><div class="btn" data-m="b" style="margin-left:${off}px">Открыть PDF</div>`), acc);
+    return { good: v(0), bad: v(12), marks: [{ t: 'edge', a: 't', b: 'b' }] };
+  } });
+add({ id: 'mixed-align', cat: 'Выравнивание', lvl: 1, title: 'Одна выключка в блоке',
+  why: 'Заголовок и кнопка стоят по центру, а текст по левому краю. Взгляд прыгает между осями. Для одного блока выбирают одну выключку.',
+  review: '«В карточке смешаны центр и левый край, оставим что-то одно»',
+  make(acc) {
+    const v = (bad) => mk(card(`<div class="img" style="height:110px;margin-bottom:14px"></div><p class="h" data-m="h" style="${bad ? 'text-align:center;' : ''}margin-bottom:6px">Марафон по типографике</p><p class="t" style="margin-bottom:16px">Семь дней, семь заданий и разбор от арт-директора в конце.</p><div style="${bad ? 'text-align:center' : ''}"><div class="btn" data-m="b">Записаться</div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'h' }, { t: 'box', a: 'b' }] };
+  } });
+add({ id: 'shift3', cat: 'Выравнивание', lvl: 3, title: 'Сдвиг на 3 пикселя',
+  why: 'Один пункт списка сдвинут вправо на 3 px. На глаз это ощущается как дрожание, даже если человек не может сказать, что именно не так.',
+  review: '«Один пункт съехал на 3 px, проверь паддинги у этого элемента»',
+  make(acc) {
+    const items = shuffle(SETTINGS).slice(0, 4), bi = rint(1, 3);
+    const v = (bad) => mk(card(items.map((t, i) => `<div class="row" style="padding:11px 0;${i ? 'border-top:1px solid var(--ln)' : ''}"><span data-m="r${i}" style="${bad && i === bi ? 'padding-left:3px' : ''}">${t}</span><span class="chev">›</span></div>`).join(''), 'padding:6px 20px'), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'edge', a: 'r0', b: `r${bi}` }] };
+  } });
+add({ id: 'baseline', cat: 'Выравнивание', lvl: 2, title: 'Цена по базовой линии',
+  why: 'Крупная цена и мелкая подпись выровнены по верху, и подпись висит в воздухе. Текст разного кегля в одной строке ставят на общую базовую линию.',
+  review: '«„в месяц“ висит сверху, выровняем по базовой линии»',
+  make(acc) {
+    const p = pick([490, 790, 990, 1490]);
+    const v = (bad) => mk(card(`<p class="lbl" style="margin-bottom:6px">Тариф «Про»</p><div data-m="r" style="display:flex;align-items:${bad ? 'flex-start' : 'baseline'};gap:6px;margin-bottom:14px"><b style="font-size:34px;line-height:1.1;letter-spacing:-.02em">${rub(p)}</b><span class="t">в месяц</span></div><div class="btn full">Подключить</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'r' }] };
+  } });
+add({ id: 'icon-circle', cat: 'Выравнивание', lvl: 2, title: 'Иконка в центре подложки',
+  why: 'Иконка смещена от центра круга. В маленьких подложках сдвиг даже на 2–3 px заметен сразу.',
+  review: '«Иконка не по центру кружка, похоже, съехала при экспорте»',
+  make(acc) {
+    const v = (bad) => mk(card(`<div class="row" style="gap:14px;align-items:flex-start"><div data-m="c" style="width:48px;height:48px;border-radius:50%;background:color-mix(in oklab,var(--a) 14%,#fff);display:grid;place-items:center;flex:none;color:var(--a)">${icon('bell', { style: `color:var(--a);${bad ? 'transform:translate(4px,-3px)' : ''}` })}</div><div><p class="h3" style="margin-bottom:4px">Напоминание</p><p class="t">Завтра в 11:00 собеседование. Ссылка на встречу в календаре.</p></div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'c' }] };
+  } });
+add({ id: 'numbers', cat: 'Выравнивание', lvl: 2, title: 'Числа по правому краю',
+  why: 'Суммы выровнены по левому краю, и разряды не стоят друг под другом. Числа в колонке прижимают вправо и набирают цифрами одинаковой ширины.',
+  review: '«Прижмём суммы вправо и включим моноширинные цифры, тогда разряды встанут в колонку»',
+  make(acc) {
+    const rows = [['Логотип', rint(8, 30) * 1000], ['Брендбук', rint(30, 90) * 1000], ['Презентация', rint(5, 20) * 1000 + 500], ['Правки', rint(1, 4) * 1000]];
+    const v = (bad) => mk(card(`<p class="h3" style="margin-bottom:10px">Счёт за проект</p>${rows.map(([n, s], i) => `<div class="row" style="padding:9px 0;border-top:1px solid var(--ln)"><span style="flex:1">${n}</span><span ${i === 0 ? 'data-m="n"' : ''} style="${bad ? 'width:110px;text-align:left' : 'width:110px;text-align:right;font-variant-numeric:tabular-nums'}">${rub(s)}</span></div>`).join('')}`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'n' }] };
+  } });
+add({ id: 'checkbox', cat: 'Выравнивание', lvl: 3, title: 'Чекбокс по первой строке',
+  why: 'Чекбокс стоит по центру трёх строк текста и теряет связь с началом фразы. Его выравнивают по первой строке.',
+  review: '«Чекбокс уехал в середину абзаца, поставим его на уровень первой строки»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h3" style="margin-bottom:12px">Почти готово</p><div class="row" style="align-items:${bad ? 'center' : 'flex-start'};gap:10px"><span data-m="c" style="width:18px;height:18px;border-radius:5px;background:var(--a);display:grid;place-items:center;flex:none;${bad ? '' : 'margin-top:1px'}"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="t">Я согласна получать письма о новых вакансиях и разборах портфолио, отписаться можно в любой момент</span></div><div class="btn full" style="margin-top:16px">Продолжить</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'c' }] };
+  } });
+
+// ===== Иерархия
+add({ id: 'two-primary', cat: 'Иерархия', lvl: 1, title: 'Одна главная кнопка',
+  why: 'Две кнопки одного веса спорят за внимание, и непонятно, какое действие основное. Второстепенное делают тише: контуром или текстом.',
+  review: '«Обе кнопки кричат одинаково. Основной оставим заливку, вторую сделаем контурной»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:6px">Отправить отклик?</p><p class="t" style="margin-bottom:18px">Компания увидит портфолио и сопроводительное письмо.</p><div class="row" data-m="r" style="gap:8px"><div class="btn" style="flex:1">Отправить</div><div class="${bad ? 'btn' : 'btn2'}" style="flex:1">Позже</div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'r' }] };
+  } });
+add({ id: 'weak-title', cat: 'Иерархия', lvl: 1, title: 'Заголовок должен выделяться',
+  why: 'Название набрано тем же кеглем и цветом, что и описание, и взгляду не за что зацепиться. Заголовку нужен кегль крупнее или насыщенность выше.',
+  review: '«Заголовок сливается с текстом, у карточки нет точки входа»',
+  make(acc) {
+    const [n, d] = pick(PRODUCTS);
+    const v = (bad) => mk(card(`<div class="img" style="margin-bottom:14px"></div><p data-m="t" class="${bad ? 't' : 'h'}" style="margin-bottom:4px">${n}</p><p class="t" style="margin-bottom:14px">${d}</p><div class="btn full">Подробнее</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 't' }] };
+  } });
+add({ id: 'old-price', cat: 'Иерархия', lvl: 1, title: 'Новая цена главнее старой',
+  why: 'Самой заметной стала зачёркнутая цена, хотя платить человек будет другую. Актуальную цену делают крупнее и контрастнее, старую тише.',
+  review: '«Зачёркнутая цена громче актуальной, поменяем их по весу»',
+  make(acc) {
+    const [n] = pick(PRODUCTS), np = rint(19, 59) * 100 - 10, op = np + rint(5, 15) * 100;
+    const big = (s, strike) => `<b style="font-size:24px;letter-spacing:-.02em;${strike ? 'text-decoration:line-through;color:var(--mut)' : ''}">${s}</b>`;
+    const small = (s, strike) => `<span class="t" style="${strike ? 'text-decoration:line-through' : ''}">${s}</span>`;
+    const v = (bad) => mk(card(`<div class="img" style="height:120px;margin-bottom:14px"></div><p class="h3" style="margin-bottom:8px">${n}</p><div class="row" data-m="r" style="align-items:baseline;gap:10px;margin-bottom:14px">${bad ? big(rub(op), true) + small(rub(np)) : big(rub(np)) + small(rub(op), true)}</div><div class="btn full">В корзину</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'r' }] };
+  } });
+add({ id: 'all-bold', cat: 'Иерархия', lvl: 2, title: 'Жирное работает, когда его мало',
+  why: 'Когда выделено всё, не выделено ничего. Жирным отмечают одно-два слова, которые человек должен заметить при беглом взгляде.',
+  review: '«Тут всё жирное, акцент потерялся. Оставим выделение только на ключевых словах»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:10px">Что входит в курс</p><div data-m="l" style="display:grid;gap:8px;${bad ? 'font-weight:700' : ''}"><p><b>12 уроков</b> по продуктовому дизайну</p><p>Разбор портфолио с <b>арт-директором</b></p><p>Чат с выпускниками и вакансии</p><p>Доступ к записям на год</p></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'l' }] };
+  } });
+add({ id: 'destructive', cat: 'Иерархия', lvl: 2, title: 'Опасное действие отличается',
+  why: 'Кнопки «Удалить» и «Отмена» выглядят одинаково, и по ошибке легко удалить проект. Деструктивное действие помечают красным и отделяют от безопасного.',
+  review: '«Удаление выглядит как обычная кнопка. Покрасим в красный, чтобы не нажали случайно»',
+  make(acc) {
+    const v = (bad) => mk(card(`<div style="width:44px;height:44px;border-radius:12px;background:#FDECEC;display:grid;place-items:center;margin-bottom:12px">${icon('trash', { style: 'color:#D92D20' })}</div><p class="h" style="margin-bottom:6px">Удалить проект?</p><p class="t" style="margin-bottom:18px">Проект «Ребрендинг» и 24 файла удалятся, вернуть их не получится.</p><div class="row" data-m="r" style="gap:8px"><div class="btn2" style="flex:1">Отмена</div><div class="${bad ? 'btn2' : 'btn'}" style="flex:1;${bad ? '' : 'background:#D92D20'}">Удалить</div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'r' }] };
+  } });
+add({ id: 'stats', cat: 'Иерархия', lvl: 3, title: 'Цифры важнее подписей',
+  why: 'В статистике смотрят на числа, а здесь крупнее подписи. Число делают главным, а подпись мелкой и спокойной.',
+  review: '«Подписи перетягивают внимание у цифр, поменяем иерархию местами»',
+  make(acc) {
+    const [n, r] = pick(PEOPLE), st = [[rint(12, 48), 'проектов'], [rint(1, 9) + ',' + rint(1, 9) + ' тыс.', 'подписчиков'], [rint(3, 12), 'лет опыта']];
+    const v = (bad) => mk(card(`<div class="row" style="gap:12px;margin-bottom:16px"><div class="ava"></div><div><p class="h3">${n}</p><p class="t sm">${r}</p></div></div><div class="row" data-m="s" style="justify-content:space-between;text-align:left">${st.map(([a, b]) => bad ? `<div><p class="t sm">${a}</p><p style="font-size:15px;font-weight:650">${b}</p></div>` : `<div><p style="font-size:20px;font-weight:700;letter-spacing:-.01em">${a}</p><p class="t sm">${b}</p></div>`).join('')}</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 's' }] };
+  } });
+
+// ===== Контраст и цвет
+add({ id: 'low-contrast', cat: 'Контраст и цвет', lvl: 1, title: 'Серому тексту нужен контраст',
+  why: 'Светло-серый текст на белом почти не читается, особенно с телефона на улице. Обычному тексту нужен контраст не ниже 4,5:1 по WCAG. Здесь {bad}:1 против {good}:1.',
+  review: '«Описание проваливает контраст, его не прочитают на солнце»',
+  make(acc) {
+    const g = '#5F6670', b = '#BEC3CA';
+    const v = (c) => mk(card(`<span class="tag">Вебинар</span><p class="h" style="margin:10px 0 6px">Как собрать кейс за выходные</p><p data-m="t" style="color:${c};margin-bottom:16px">Покажем структуру, которую читают нанимающие менеджеры, и разберём три портфолио зрителей.</p><div class="btn">Зарегистрироваться</div>`), acc);
+    return { good: v(g), bad: v(b), marks: [{ t: 'box', a: 't' }], vars: { good: ratio(g, '#FFFFFF'), bad: ratio(b, '#FFFFFF') } };
+  } });
+add({ id: 'white-yellow', cat: 'Контраст и цвет', lvl: 1, title: 'Белое на жёлтом не читается',
+  why: 'У белого текста на жёлтом контраст {bad}:1, у тёмного {good}:1. На светлых заливках текст делают тёмным.',
+  review: '«На жёлтой кнопке белый текст не проходит по контрасту, сделаем его тёмным»',
+  make(acc) {
+    const y = '#FFC53D';
+    const v = (c) => mk(card(`<p class="h" style="margin-bottom:6px">Чёрная пятница</p><p class="t" style="margin-bottom:16px">Скидка 30% на все курсы до воскресенья.</p><div class="btn full" data-m="b" style="background:${y};color:${c}">Выбрать курс</div>`), acc);
+    return { good: v('#16181D'), bad: v('#FFFFFF'), marks: [{ t: 'box', a: 'b' }], vars: { good: ratio('#16181D', y), bad: ratio('#FFFFFF', y) } };
+  } });
+add({ id: 'placeholder', cat: 'Контраст и цвет', lvl: 2, title: 'Плейсхолдер не заменяет подпись',
+  why: 'Подсказка внутри поля исчезает, как только человек начинает печатать, и он забывает, что вводил. Подпись должна оставаться над полем.',
+  review: '«Без подписей человек потеряется, как только начнёт заполнять форму»',
+  make(acc) {
+    const f = (lab, ph, bad, k) => `<div style="margin-bottom:14px">${bad ? '' : `<div class="lbl" style="margin-bottom:6px">${lab}</div>`}<div class="inp" data-m="${k}"><span class="ph">${bad ? lab : ph}</span></div></div>`;
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:16px">Заявка на проект</p>${f('Имя', 'Как к вам обращаться', bad, 'a')}${f('Бюджет', 'Например, 80 000 ₽', bad, 'b')}<div class="btn full">Отправить</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'a' }, { t: 'box', a: 'b' }] };
+  } });
+add({ id: 'link', cat: 'Контраст и цвет', lvl: 2, title: 'Ссылка должна выглядеть ссылкой',
+  why: 'Ссылка набрана тем же цветом, что и текст, и без подчёркивания. Догадаться, что на неё можно нажать, нельзя.',
+  review: '«Ссылку не отличить от текста, добавим цвет и подчёркивание»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:8px">Проверьте почту</p><p class="t">Мы отправили письмо на anna@example.com. Не пришло? <span data-m="l" style="${bad ? '' : 'color:var(--a);text-decoration:underline;text-underline-offset:2px'}">Отправить ещё раз</span></p>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'l' }] };
+  } });
+add({ id: 'red-ok', cat: 'Контраст и цвет', lvl: 2, title: 'Красный означает ошибку',
+  why: 'Сообщение об успешном сохранении покрашено в красный, и человек пугается, что что-то сломалось. Цвет сообщения должен совпадать с его смыслом.',
+  review: '«Сообщение об успехе красное, это читается как ошибка»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h3" style="margin-bottom:12px">Настройки профиля</p><div data-m="m" class="row" style="gap:10px;align-items:flex-start;padding:12px;border-radius:10px;background:${bad ? '#FDECEC' : '#E7F6EE'};color:${bad ? '#B42318' : '#11734A'}">${icon(bad ? 'info' : 'check', { style: 'color:inherit' })}<span>Изменения сохранены. Новое фото появится через минуту.</span></div><div class="lbl" style="margin:14px 0 6px">Имя на сайте</div><div class="inp">Анна Котова</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'm' }] };
+  } });
+add({ id: 'disabled', cat: 'Контраст и цвет', lvl: 3, title: 'Неактивная кнопка выглядит неактивной',
+  why: 'Поля пустые и кнопка выключена, но она почти не отличается от рабочей. Человек нажимает и не понимает, почему ничего не происходит.',
+  review: '«Задизейбленная кнопка выглядит активной, нужен явный серый стейт»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:16px">Новый пароль</p><div class="lbl" style="margin-bottom:6px">Пароль</div><div class="inp" style="margin-bottom:14px"><span class="ph">Не меньше 8 символов</span></div><div class="lbl" style="margin-bottom:6px">Повторите пароль</div><div class="inp" style="margin-bottom:16px"></div><div class="btn full" data-m="b" style="${bad ? 'opacity:.82' : 'background:#E3E6EA;color:#9AA1AA'}">Сохранить</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'b' }] };
+  } });
+
+// ===== Единообразие
+add({ id: 'nested-radius', cat: 'Единообразие', lvl: 3, title: 'Вложенные скругления',
+  why: 'У картинки внутри карточки такой же радиус, как у самой карточки, и углы выглядят неровными. Внутренний радиус равен внешнему минус отступ: 20 − 8 = 12.',
+  review: '«Внутренний радиус уменьшим на величину паддинга, тогда углы станут концентричными»',
+  make(acc) {
+    const [n] = pick(PRODUCTS);
+    const v = (r) => mk(card(`<div class="img" data-m="i" style="border-radius:${r}px;height:160px"></div><div style="padding:12px 10px 8px"><p class="h3">${n}</p><p class="t sm">Осталось 3 штуки</p></div>`, 'padding:8px;border-radius:20px'), acc);
+    return { good: v(12), bad: v(20), marks: [{ t: 'box', a: 'i' }] };
+  } });
+add({ id: 'icon-style', cat: 'Единообразие', lvl: 2, title: 'Иконки из одного набора',
+  why: 'Контурные и залитые иконки в одном ряду выглядят как из разных приложений. В одном наборе держат один стиль и одну толщину линии.',
+  review: '«Иконки из разных наборов, приведём все к контурным»',
+  make(acc) {
+    const set = ['home', 'search', 'heart', 'user'], bi = rint(1, 3);
+    const v = (bad) => mk(card(`<div class="row" style="justify-content:space-around">${set.map((n, i) => `<span data-m="i${i}" style="display:grid;place-items:center;gap:4px;font-size:11.5px;color:var(--mut)">${icon(n, { fill: bad && (i === bi || i === (bi + 2) % 4) })}${['Главная', 'Поиск', 'Избранное', 'Профиль'][i]}</span>`).join('')}</div>`, 'padding:14px 12px'), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: `i${bi}` }, { t: 'box', a: `i${(bi + 2) % 4}` }] };
+  } });
+add({ id: 'two-blues', cat: 'Единообразие', lvl: 3, title: 'Один фирменный цвет',
+  why: 'У одной кнопки оттенок немного отличается от остальных. Такое бывает, когда цвет берут пипеткой со скриншота, а не из стилей.',
+  review: '«У этой кнопки свой оттенок, не из палитры. Привяжем к токену»',
+  make(acc) {
+    const off = '#' + acc.slice(1).match(/../g).map((h, i) => Math.max(0, Math.min(255, parseInt(h, 16) + [24, 18, -20][i])).toString(16).padStart(2, '0')).join('');
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:14px">Выберите формат</p><div style="display:grid;gap:8px"><div class="btn full">Онлайн</div><div class="btn full" data-m="b" style="${bad ? `background:${off}` : ''}">В офисе</div><div class="btn full">Гибрид</div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'b' }] };
+  } });
+add({ id: 'radius-mix', cat: 'Единообразие', lvl: 2, title: 'Одинаковые скругления',
+  why: 'Кнопки стоят рядом, но с разными радиусами. Скругление должно быть общим для всех элементов одного типа.',
+  review: '«У кнопок разные радиусы, возьмём один из дизайн-системы»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h" style="margin-bottom:6px">Сохранить черновик?</p><p class="t" style="margin-bottom:18px">Изменения в макете ещё не отправлены клиенту.</p><div class="row" style="gap:8px"><div class="btn2" style="flex:1">Не сохранять</div><div class="btn" data-m="b" style="flex:1;${bad ? 'border-radius:2px' : ''}">Сохранить</div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'b' }] };
+  } });
+add({ id: 'shadow-mix', cat: 'Единообразие', lvl: 2, title: 'Одна система теней',
+  why: 'У одной карточки тяжёлая тёмная тень, у соседней лёгкая. Тени одного уровня делают одинаковыми, иначе карточка будто висит выше остальных.',
+  review: '«Тень у этой карточки из другого стиля, она выпрыгивает из сетки»',
+  make(acc) {
+    const it = shuffle(ARTICLES).slice(0, 2), bi = rint(0, 1), mins = [rint(4, 12), rint(4, 12)];
+    const v = (bad) => mk(`<div style="display:grid;gap:12px">${it.map((t, i) => card(`<span class="tag">Статья</span><p class="h3" style="margin-top:8px">${t}</p><p class="t sm" style="margin-top:4px">${mins[i]} минут чтения</p>`, bad && i === bi ? 'box-shadow:0 10px 24px rgba(0,0,0,.38)' : '', `data-m="c${i}"`)).join('')}</div>`, acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: `c${bi}` }] };
+  } });
+
+// ===== Типографика
+const HANGS = [[['Соберём подарок', 'и привезём за час'], ['Соберём подарок и', 'привезём за час'], 'и'], [['Запишитесь на курс', 'в удобное время'], ['Запишитесь на курс в', 'удобное время'], 'в'], [['Скидка 20% на всё', 'для новых клиентов'], ['Скидка 20% на всё для', 'новых клиентов'], 'для'], [['Покажем портфолио', 'на живой встрече'], ['Покажем портфолио на', 'живой встрече'], 'на']];
+add({ id: 'hang', cat: 'Типографика', lvl: 2, title: 'Висячий предлог',
+  why: 'Короткое слово осталось в конце строки и оторвалось от того, к чему относится. В русской типографике его переносят на следующую строку неразрывным пробелом.',
+  review: '«В заголовке висит предлог, поставим неразрывный пробел»',
+  make(acc) {
+    const [g, b, w] = pick(HANGS);
+    const ln = (a) => a.map((s) => `<span style="display:block;white-space:nowrap">${s}</span>`).join('');
+    const badL = ln([b[0].replace(new RegExp(` ${w}$`), ` <span data-m="w">${w}</span>`), b[1]]);
+    const v = (lines) => mk(card(`<span class="tag">Акция</span><p class="h" style="margin:10px 0 8px;font-size:22px">${lines}</p><p class="t" style="margin-bottom:16px">Только до конца недели.</p><div class="btn">Подробнее</div>`), acc);
+    return { good: v(ln(g)), bad: v(badL), marks: [{ t: 'box', a: 'w' }] };
+  } });
+add({ id: 'quotes', cat: 'Типографика', lvl: 1, title: 'Кавычки-ёлочки',
+  why: 'В русском тексте основные кавычки «ёлочки». Прямые кавычки пришли с клавиатуры и в интерфейсе смотрятся случайными.',
+  review: '«Поменяем прямые кавычки на ёлочки»',
+  make(acc) {
+    const n = pick(['Дизайн интерфейсов', 'Продуктовое мышление', 'Типографика с нуля']);
+    const v = (q) => mk(card(`<p class="lbl" style="margin-bottom:6px">Вы записаны на курс</p><p class="h" data-m="q" style="margin-bottom:8px">${q[0]}${n}${q[1]}</p><p class="t" style="margin-bottom:16px">Старт 3 ноября, ссылку пришлём на почту.</p><div class="btn2 full">В календарь</div>`), acc);
+    return { good: v(['«', '»']), bad: v(['"', '"']), marks: [{ t: 'box', a: 'q' }] };
+  } });
+add({ id: 'title-case', cat: 'Типографика', lvl: 1, title: 'Заглавные как в английском',
+  why: 'В английских интерфейсах каждое слово в заголовке пишут с большой буквы. По-русски с заглавной пишется только первое слово.',
+  review: '«Тут английский Title Case, по-русски заглавная нужна только в начале»',
+  make(acc) {
+    const v = (bad) => mk(card(`<p class="h" data-m="h" style="margin-bottom:14px">${bad ? 'Способ Доставки' : 'Способ доставки'}</p><div class="inp" style="margin-bottom:8px;border-color:var(--a)">Курьером до двери</div><div class="inp" style="margin-bottom:16px">Пункт выдачи</div><div class="btn full" data-m="b">${bad ? 'Оформить Заказ' : 'Оформить заказ'}</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'h' }, { t: 'box', a: 'b' }] };
+  } });
+add({ id: 'price-format', cat: 'Типографика', lvl: 2, title: 'Цена по правилам',
+  why: 'Разряды разделяют пробелом, знак рубля ставят после числа тоже через пробел. Запись слитно с «р.» читается дольше и выглядит небрежно.',
+  review: '«Разобьём цену на разряды и заменим „р.“ на ₽»',
+  make(acc) {
+    const [n, d] = pick(PRODUCTS), p = rint(11, 39) * 1000 - 10;
+    const v = (bad) => mk(card(`<div class="img" style="height:120px;margin-bottom:14px"></div><p class="h3">${n}</p><p class="t sm" style="margin:2px 0 12px">${d}</p><div class="row" style="justify-content:space-between"><b data-m="p" style="font-size:20px">${bad ? p + 'р.' : rub(p)}</b><div class="btn">Купить</div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'p' }] };
+  } });
+add({ id: 'range-dash', cat: 'Типографика', lvl: 3, title: 'Диапазон через короткое тире',
+  why: 'Между числами в диапазоне ставят короткое тире без пробелов: 10–15. Дефис для этого слишком короткий и выглядит как опечатка.',
+  review: '«В диапазонах стоят дефисы, нужно короткое тире»',
+  make(acc) {
+    const lo = rint(15, 25), hi = rint(30, 45);
+    const v = (d) => mk(card(`<p class="h" style="margin-bottom:12px">Кофейня на Лесной</p><div style="display:grid;gap:8px"><div class="row"><span class="t" style="width:110px">Доставка</span><span data-m="a">${lo}${d}${hi} минут</span></div><div class="row"><span class="t" style="width:110px">Работаем</span><span data-m="b">8:00${d}22:00</span></div></div><div class="btn full" style="margin-top:16px">Заказать</div>`), acc);
+    return { good: v('–'), bad: v('-'), marks: [{ t: 'box', a: 'a' }, { t: 'box', a: 'b' }] };
+  } });
+add({ id: 'dot-title', cat: 'Типографика', lvl: 2, title: 'Точка в заголовке',
+  why: 'После заголовка и текста на кнопке точку не ставят. Она обрывает фразу, и интерфейс начинает звучать как официальный документ.',
+  review: '«Уберём точки в заголовке и на кнопке»',
+  make(acc) {
+    const v = (bad) => mk(card(`<div style="width:44px;height:44px;border-radius:50%;background:#E7F6EE;display:grid;place-items:center;margin-bottom:12px">${icon('check', { style: 'color:#11734A' })}</div><p class="h" data-m="h" style="margin-bottom:6px">Заказ оформлен${bad ? '.' : ''}</p><p class="t" style="margin-bottom:16px">Пришлём сообщение, когда курьер выедет.</p><div class="btn2 full" data-m="b">Вернуться в магазин${bad ? '.' : ''}</div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'h' }, { t: 'box', a: 'b' }] };
+  } });
+add({ id: 'caps', cat: 'Типографика', lvl: 1, title: 'Капслок для длинного текста',
+  why: 'Текст из одних заглавных читается медленнее: у слов пропадает силуэт. Капсом набирают короткие метки, а не абзацы.',
+  review: '«Абзац капсом тяжело читать, оставим капс только для лейблов»',
+  make(acc) {
+    const v = (bad) => mk(card(`<span class="tag">Важно</span><p class="h" style="margin:10px 0 6px">Новые правила возврата</p><p class="t" data-m="p" style="${bad ? 'text-transform:uppercase;font-size:13px;letter-spacing:.02em' : ''}">С 1 декабря вернуть товар можно в течение 30 дней, даже если упаковка вскрыта.</p>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'p' }] };
+  } });
+add({ id: 'leading', cat: 'Типографика', lvl: 2, title: 'Межстрочный интервал',
+  why: 'Строки почти касаются друг друга, и глаз теряет, где начинается следующая. Основному тексту нужен интервал примерно в полтора кегля.',
+  review: '«Интерлиньяж слишком плотный, текст слипается в серое пятно»',
+  make(acc) {
+    const art = pick(ARTICLES);
+    const v = (lh) => mk(card(`<p class="h" style="margin-bottom:8px">${art}</p><p data-m="p" style="line-height:${lh};color:#3D434B">Мы поговорили с двадцатью пользователями и поняли, что первый экран никто не читает. Люди сразу ищут кнопку, а тексты пролистывают. Поэтому оставили одну фразу и одно действие.</p>`), acc);
+    return { good: v(1.55), bad: v(1.08), marks: [{ t: 'box', a: 'p' }] };
+  } });
+add({ id: 'justify', cat: 'Типографика', lvl: 2, title: 'Выключка по ширине в узкой колонке',
+  why: 'В узкой колонке выравнивание по ширине растягивает пробелы, и в тексте появляются дыры. В интерфейсах текст выравнивают по левому краю.',
+  review: '«Из-за выключки по ширине пошли реки пробелов, вернём левую»',
+  make(acc) {
+    const v = (bad) => mk(card(`<div class="row" style="gap:16px;align-items:flex-start"><div class="img" style="width:92px;height:120px;flex:none"></div><div><p class="h3" style="margin-bottom:6px">Дизайн-система</p><p class="t" data-m="p" style="hyphens:none;${bad ? 'text-align:justify' : ''}">Библиотека компонентов помогает договориться о кнопках, отступах и цветах до того, как появятся первые макеты экранов.</p></div></div>`), acc);
+    return { good: v(false), bad: v(true), marks: [{ t: 'box', a: 'p' }] };
+  } });
+
+/* ---------- overlay marks ---------- */
+function rel(el, root) { let x = 0, y = 0, n = el; while (n && n !== root) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; }
+function drawMarks(host, marks, isBad) {
+  const root = host.querySelector('.mk'); if (!root) return;
+  const ov = document.createElement('div'); ov.className = 'ov'; root.appendChild(ov);
+  const q = (k) => root.querySelector(`[data-m="${k}"]`);
+  const div = (cls, st, txt) => { const d = document.createElement('div'); d.className = cls; Object.assign(d.style, st); if (txt != null) d.textContent = txt; ov.appendChild(d); return d; };
+  const vline = (x, y1, y2) => { const v = Math.round(y2 - y1); div('ln', { left: x + 'px', top: y1 + 'px', width: '1px', height: Math.max(0, y2 - y1) + 'px' }); div('ln', { left: x - 4 + 'px', top: y1 + 'px', width: '9px', height: '1px' }); div('ln', { left: x - 4 + 'px', top: y2 + 'px', width: '9px', height: '1px' }); div('lab', { left: x - 18 + 'px', top: (y1 + y2) / 2 + 'px' }, v); };
+  const hline = (y, x1, x2) => { const v = Math.round(x2 - x1); div('ln', { left: x1 + 'px', top: y + 'px', width: Math.max(0, x2 - x1) + 'px', height: '1px' }); div('ln', { left: x1 + 'px', top: y - 4 + 'px', width: '1px', height: '9px' }); div('ln', { left: x2 + 'px', top: y - 4 + 'px', width: '1px', height: '9px' }); div('lab', { left: (x1 + x2) / 2 + 'px', top: y - 11 + 'px' }, v); };
+  for (const m of marks) {
+    if (m.t === 'box') { if (!isBad) continue; const e = q(m.a); if (!e) continue; const r = rel(e, root); div('box', { left: r.x - 5 + 'px', top: r.y - 5 + 'px', width: r.w + 10 + 'px', height: r.h + 10 + 'px' }); continue; }
+    const a = q(m.a || m.box), b = q(m.b || m.child); if (!a || !b) continue;
+    const A = rel(a, root), B = rel(b, root);
+    if (m.t === 'gap') vline(Math.max(A.x + A.w, B.x + B.w) - 22, A.y + A.h, B.y);
+    if (m.t === 'gapH') hline(B.y + B.h / 2, A.x + A.w, B.x);
+    if (m.t === 'padL') hline(B.y + B.h / 2, A.x, B.x);
+    if (m.t === 'padR') hline(B.y + B.h / 2, B.x + B.w, A.x + A.w);
+    if (m.t === 'edge') {
+      const top = Math.min(A.y, B.y) - 8, bot = Math.max(A.y + A.h, B.y + B.h) + 8;
+      div('guide', { left: A.x + 'px', top: top + 'px', height: bot - top + 'px' });
+      if (Math.abs(B.x - A.x) >= 1) { div('guide', { left: B.x + 'px', top: top + 'px', height: bot - top + 'px' }); div('lab', { left: (A.x + B.x) / 2 + 'px', top: bot + 10 + 'px' }, Math.round(B.x - A.x)); }
+    }
+  }
+}
+
+/* ---------- game state ---------- */
+const KEY = 'nasmotrennost-v1';
+let store = { best: 0, games: 0 };
+try { store = Object.assign(store, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* storage unavailable */ }
+const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) { /* ignore */ } };
+let G;
+function newGame() {
+  const used = new Set(), queue = [], perCat = {};
+  let lastCat = '';
+  const byBalance = (pool) => shuffle(pool).sort((x, y) => (perCat[x.cat] || 0) - (perCat[y.cat] || 0));
+  for (const lvl of PLAN) {
+    let pool = byBalance(C.filter((c) => !used.has(c.id) && c.lvl === lvl && c.cat !== lastCat));
+    const least = Math.min(...C.filter((c) => !used.has(c.id)).map((c) => perCat[c.cat] || 0));
+    if (!pool.length || (perCat[pool[0].cat] || 0) > least + 1) pool = byBalance(C.filter((c) => !used.has(c.id) && c.cat !== lastCat));
+    if (!pool.length) pool = byBalance(C.filter((c) => !used.has(c.id)));
+    const ch = pool[0]; used.add(ch.id); lastCat = ch.cat; perCat[ch.cat] = (perCat[ch.cat] || 0) + 1; queue.push(ch);
+  }
+  G = { queue, i: 0, score: 0, streak: 0, answered: false, log: [] };
+  $('#summary').hidden = true; $('#round').hidden = false;
+  showRound();
+}
+function showRound() {
+  const ch = G.queue[G.i];
+  const acc = pick(ACCENTS);
+  const r = ch.make(acc);
+  const badSide = Math.random() < 0.5 ? 'a' : 'b';
+  G.cur = { ch, r, badSide };
+  G.answered = false;
+  $('#host-a').innerHTML = badSide === 'a' ? r.bad : r.good;
+  $('#host-b').innerHTML = badSide === 'b' ? r.bad : r.good;
+  for (const s of ['a', 'b']) { const o = $(`#opt-${s}`); o.classList.remove('is-ok', 'is-bad'); o.setAttribute('aria-disabled', 'false'); $(`#v-${s}`).textContent = ''; }
+  $('#cat').textContent = ch.cat;
+  $('#lvl').textContent = '●'.repeat(ch.lvl) + '○'.repeat(3 - ch.lvl);
+  $('#lvl').setAttribute('aria-label', `Сложность ${ch.lvl} из 3`);
+  $('#explain').hidden = true;
+  updateStats();
+}
+function updateStats() {
+  $('#s-round').textContent = `${Math.min(G.i + 1, ROUNDS)}/${ROUNDS}`;
+  $('#s-score').textContent = G.score;
+  $('#s-streak').textContent = G.streak;
+  $('#s-best').textContent = store.best;
+  $('#prog').style.width = `${((G.i + (G.answered ? 1 : 0)) / ROUNDS) * 100}%`;
+}
+function answer(side) {
+  if (G.answered) return;
+  G.answered = true;
+  const { ch, r, badSide } = G.cur;
+  const goodSide = badSide === 'a' ? 'b' : 'a';
+  const ok = side === goodSide;
+  if (ok) { G.score++; G.streak++; } else G.streak = 0;
+  G.log.push({ id: ch.id, cat: ch.cat, title: ch.title, review: ch.review, ok });
+  $(`#opt-${goodSide}`).classList.add('is-ok'); $(`#v-${goodSide}`).textContent = 'Так лучше';
+  $(`#opt-${badSide}`).classList.add('is-bad'); $(`#v-${badSide}`).textContent = 'Здесь ошибка';
+  for (const s of ['a', 'b']) $(`#opt-${s}`).setAttribute('aria-disabled', 'true');
+  drawMarks($(`#host-${badSide}`), r.marks, true);
+  drawMarks($(`#host-${goodSide}`), r.marks.filter((m) => m.t !== 'box' && m.t !== 'edge'), false);
+  const res = $('#res'); res.className = 'res ' + (ok ? 'ok' : 'bad'); res.textContent = ok ? 'Верно' : 'Мимо';
+  $('#ex-title').textContent = ch.title;
+  let why = ch.why; if (r.vars) for (const k in r.vars) why = why.replace(`{${k}}`, r.vars[k]);
+  $('#ex-why').textContent = why;
+  $('#ex-review').textContent = ch.review;
+  $('#next').textContent = G.i + 1 >= ROUNDS ? 'Итоги' : 'Дальше';
+  $('#explain').hidden = false;
+  updateStats();
+  $('#next').focus({ preventScroll: true });
+  const ex = $('#explain'); const rect = ex.getBoundingClientRect();
+  if (rect.bottom > window.innerHeight) ex.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+}
+function next() {
+  if (!G.answered) return;
+  G.i++;
+  if (G.i >= ROUNDS) { finish(); return; }
+  showRound();
+  window.scrollTo({ top: Math.max(0, $('.progress').offsetTop - 12), behavior: 'auto' });
+}
+const VERDICTS = [[14, 'Глаз арт-директора', 'Ошибки видишь раньше, чем их успевают показать. На ревью с таким глазом спокойно.'], [11, 'Уверенный уровень', 'Почти всё ловишь. Посмотри список ниже: это темы, где глаз ещё может подвести.'], [7, 'Крепкая база', 'Крупные ошибки видишь сразу, тонкие пока проскакивают. Пройди ещё пару партий.'], [0, 'Глаз разогревается', 'Нормальное начало. Объяснения после каждого раунда как раз для этого: через пару партий результат вырастет.']];
+function finish() {
+  store.games++; if (G.score > store.best) store.best = G.score; persist();
+  $('#round').hidden = true; $('#summary').hidden = false;
+  $('#sum-score').innerHTML = `${G.score}<small>/${ROUNDS}</small>`;
+  const [, t, d] = VERDICTS.find(([min]) => G.score >= min);
+  $('#sum-title').textContent = t; $('#sum-text').textContent = d;
+  const cats = {};
+  for (const l of G.log) { cats[l.cat] = cats[l.cat] || [0, 0]; cats[l.cat][1]++; if (l.ok) cats[l.cat][0]++; }
+  $('#sum-cats').innerHTML = Object.entries(cats).map(([c, [ok, all]]) => `<div class="cat-row"><header><b>${c}</b><span>${ok} из ${all}</span></header><div class="meter" role="img" aria-label="${c}: ${ok} из ${all}"><i style="width:${(ok / all) * 100}%"></i></div></div>`).join('');
+  const missed = G.log.filter((l) => !l.ok);
+  $('#sum-missed').innerHTML = missed.length ? `<h3>Что повторить</h3><ul>${missed.map((m) => `<li><small>${m.cat}</small><b>${m.title}</b><span>${m.review}</span></li>`).join('')}</ul>` : '<h3>Ни одного промаха</h3>';
+  $('#sum-best').textContent = `Рекорд: ${store.best} из ${ROUNDS} · сыграно партий: ${store.games}`;
+  updateStats(); $('#prog').style.width = '100%';
+  $('#again').focus({ preventScroll: true });
+}
+
+/* ---------- input ---------- */
+for (const s of ['a', 'b']) {
+  const o = $(`#opt-${s}`);
+  o.addEventListener('click', () => answer(s));
+  o.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); if (!G.answered) answer(s); else next(); } });
+}
+$('#next').addEventListener('click', next);
+$('#again').addEventListener('click', newGame);
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest && e.target.closest('input,textarea,select')) return;
+  if ($('#round').hidden) { if (e.key === 'Enter' && e.target === document.body) newGame(); return; }
+  if (!G.answered) {
+    if (e.key === 'ArrowLeft' || e.key === '1' || e.code === 'KeyF') { e.preventDefault(); answer('a'); }
+    if (e.key === 'ArrowRight' || e.key === '2' || e.code === 'KeyJ') { e.preventDefault(); answer('b'); }
+  } else if ((e.key === 'Enter' || e.key === 'ArrowRight' || e.key === ' ') && !(e.target.classList && e.target.classList.contains('btn'))) { e.preventDefault(); next(); }
+});
+
+if (location.hash === '#debug') window.__nasm = { C, drawMarks, pick, ACCENTS };
+newGame();
+})();
+</script>
+</body></html>
