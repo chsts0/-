@@ -337,7 +337,7 @@ function updateSetupSum() { $('#setup-sum').textContent = [label('kind', S.kind)
 /* ---------- Claude ---------- */
 let SAMPLE;            // undefined while connecting, null when this view cannot ask Claude
 let IMG = null;        // image limits, null when images cannot be sent
-let DENIED = false;
+let DENIED = false, IMG_OFF = false;
 async function connect() {
   if (!window.claude || !window.claude.use) { SAMPLE = null; updateRun(); return; }
   try { SAMPLE = await window.claude.use('sample'); } catch (_) { SAMPLE = null; }
@@ -588,7 +588,7 @@ function canAsk() {
   if (SAMPLE === undefined) return 'Подключаюсь к Claude…';
   if (SAMPLE === null) return 'Разбирать макеты можно, когда страница открыта в Claude. Здесь показан пример.';
   if (DENIED) return 'Странице не разрешили обращаться к Claude. Обнови страницу, если передумал.';
-  if (!IMG) return 'В этом окне нельзя отправить картинку Claude. Открой страницу в браузере на claude.ai.';
+  if (IMG_OFF) return 'Claude ответил, что в этом окне картинки не принимаются. Разбор скринов здесь недоступен.';
   return '';
 }
 function updateRun() {
@@ -859,7 +859,7 @@ const ERR = {
   not_declared: 'Разбор отключён в этой версии страницы.',
   capability_disabled: 'Разбор недоступен в этом окне.',
   capability_removed: 'Это приложение Claude слишком старое для разбора. Открой страницу в браузере.',
-  images_unavailable: 'В этом окне нельзя отправить картинку Claude. Открой страницу в браузере на claude.ai.',
+  images_unavailable: 'Claude ответил, что в этом окне картинки не принимаются. Разбор скринов здесь недоступен.',
   rate_limited: 'Слишком много запросов подряд или закончился лимит. Подожди немного и запусти ещё раз.',
   session_expired: 'Сессия Claude истекла. Войди заново и запусти разбор.',
   image_rejected: 'Claude не принял картинку. Попробуй PNG или JPG поменьше.',
@@ -913,7 +913,7 @@ async function run() {
     if (code === 'cancelled') r.notes.push('Разбор остановлен. Что успело прийти, осталось на экране.');
     else if (code === 'refused') { r.issues = r.issues.filter((i) => i.status); r.goods = []; r.asks = []; r.score = null; r.error = ERR.refused; }
     else if (code === 'not_granted') { DENIED = true; r.error = ERR.not_granted; }
-    else if (code === 'images_unavailable') { IMG = null; r.error = ERR.images_unavailable; }
+    else if (code === 'images_unavailable') { IMG_OFF = true; r.error = ERR.images_unavailable; }
     else if (code === 'invalid_request' || code === 'transform_error' || code === 'queue_overflow') r.error = 'Что-то не так со страницей, разбор не отправился. Обнови её и попробуй ещё раз.';
     else r.error = ERR[code] || (e && e.text ? 'Связь оборвалась на середине. То, что успело прийти, осталось на экране, разбор можно запустить заново.' : 'Не получилось связаться с Claude. Попробуй ещё раз чуть позже.');
   } finally {
