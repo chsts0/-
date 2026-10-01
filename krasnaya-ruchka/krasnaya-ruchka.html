@@ -1,0 +1,1262 @@
+<title>Красная ручка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: an art director's desk. The screenshot lies on the left like a printout under a red pen, the review sheet sits on the right. The chrome stays cool grey so the only red on the page is the pen. */
+:root{
+  --bg:#E7EAEE;
+  --desk:#DCE0E6;
+  --panel:#FFFFFF;
+  --field:#F1F3F6;
+  --ink:#15181D;
+  --muted:#59616C;
+  --line:#D3D8DF;
+  --pen:#D3241A;
+  --ok:#1B8047;
+  --mid:#9C5D00;
+  --accent:#15181D;
+  --on-accent:#FFFFFF;
+  --focus:#2F5BFF;
+  --mark:#E3261B;
+  --tag-bg:#FFFFFF;
+  --tag-ink:#D2221A;
+  --check:#15A049;
+  --font-ui:"Golos Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-hand:"Caveat", "Segoe Print", "Comic Sans MS", cursive;
+  --font-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1114;--desk:#15181C;--panel:#181B20;--field:#20242A;--ink:#ECEEF1;--muted:#9AA2AD;--line:#2B3037;--pen:#FF5A4F;--ok:#4FC389;--mid:#E2A33E;--accent:#ECEEF1;--on-accent:#111316;--focus:#8EA2FF;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1114;--desk:#15181C;--panel:#181B20;--field:#20242A;--ink:#ECEEF1;--muted:#9AA2AD;--line:#2B3037;--pen:#FF5A4F;--ok:#4FC389;--mid:#E2A33E;--accent:#ECEEF1;--on-accent:#111316;--focus:#8EA2FF;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:15px/1.45 var(--font-ui);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1680px;margin:0 auto;padding-inline:24px;padding-block:18px 64px}
+@media (max-width:640px){.wrap{padding-inline:16px}}
+
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-block:6px 18px}
+.top h1{margin:0;font-size:30px;line-height:1.1;font-weight:700;letter-spacing:-0.02em}
+.top h1 .u{position:relative;display:inline-block}
+.top h1 .u svg{position:absolute;left:-2%;bottom:-9px;width:104%;height:14px;overflow:visible}
+.top h1 .u path{fill:none;stroke:var(--pen);stroke-width:3.2;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.top p{margin:10px 0 0;color:var(--muted);max-width:66ch;text-wrap:pretty}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:500;font-size:14px;line-height:1.1;cursor:pointer;text-align:center}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.big{padding:13px 16px;font-size:15px;font-weight:600;width:100%}
+.btn.small{padding:7px 10px;font-size:13px;border-radius:8px}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.linkbtn{border:0;background:none;padding:0;color:inherit;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,430px);gap:24px;align-items:start}
+@media (max-width:1000px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-col{min-width:0;display:flex;flex-direction:column;gap:10px}
+
+.versions{display:flex;flex-wrap:wrap;gap:6px}
+.versions button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;font-variant-numeric:tabular-nums}
+.versions button[aria-current="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+
+.stage{position:relative;background:var(--desk);border-radius:16px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:14px;min-height:420px}
+@media (max-width:640px){.stage{padding:12px;border-radius:12px;min-height:260px}}
+.banner{align-self:stretch;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--muted)}
+.banner b{color:var(--pen);font:700 20px/1 var(--font-hand)}
+.sheet{position:relative;margin:0;background:#FFFFFF;box-shadow:0 1px 2px rgba(10,14,20,.12),0 10px 30px rgba(10,14,20,.16);max-width:100%;line-height:0}
+.sheet img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.sheet.empty{width:100%;aspect-ratio:16/10;background:transparent;box-shadow:none;border:2px dashed var(--line)}
+.ink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;transition:opacity .2s}
+.mk{fill:none;stroke:var(--mark);stroke-linecap:round;stroke-linejoin:round;stroke-width:calc(var(--k, 1) * 2.6px);transition:opacity .2s}
+.mk.sev-high{stroke-width:calc(var(--k, 1) * 3.2px)}
+.mk.sev-low{stroke-width:calc(var(--k, 1) * 2.1px)}
+.mk.tick{stroke:var(--check);stroke-width:calc(var(--k, 1) * 3.6px)}
+.mk.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .8s cubic-bezier(.35,.1,.25,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.labels{position:absolute;inset:0;pointer-events:none;font-size:var(--fs, 18px);line-height:1;transition:opacity .2s}
+.lbl{position:absolute;left:0;top:0;pointer-events:auto;display:inline-flex;align-items:center;gap:.28em;padding:.1em .45em .14em .18em;border:0;border-radius:.35em;background:var(--tag-bg);color:var(--tag-ink);font:700 1em/1.05 var(--font-hand);white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.25);transform:rotate(-1.4deg);cursor:pointer;transition:opacity .2s, transform .15s}
+.lbl .num{display:inline-grid;place-items:center;min-width:1.32em;height:1.32em;padding-inline:.12em;border:.11em solid currentColor;border-radius:52% 48% 55% 45% / 48% 55% 45% 52%;font-size:.86em}
+.lbl.pop{animation:pop .35s .6s both}
+@keyframes pop{from{opacity:0;transform:rotate(-1.4deg) scale(.5)}}
+.sheet.focus .mk:not(.on),.sheet.focus .lbl:not(.on){opacity:.14}
+.lbl.on{z-index:3;transform:rotate(-1.4deg) scale(1.1)}
+.sheet.nomarks .ink,.sheet.nomarks .labels{opacity:0;pointer-events:none}
+.sheet.nomarks .lbl{pointer-events:none}
+.scan{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.scan::before{content:"";position:absolute;left:0;right:0;height:22%;top:-22%;background:linear-gradient(180deg,rgba(227,38,27,0),rgba(227,38,27,.10) 80%,rgba(227,38,27,.55) 100%);animation:scan 2.6s linear infinite}
+@keyframes scan{to{top:100%}}
+.dropveil{position:absolute;inset:0;border-radius:16px;border:2px dashed var(--pen);background:color-mix(in srgb, var(--desk) 82%, transparent);display:grid;place-items:center;font:700 30px/1.1 var(--font-hand);color:var(--pen);z-index:5;pointer-events:none}
+.stage-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;color:var(--muted);font-size:13px}
+.stage-bar .hint{flex:1 1 220px;min-width:0}
+kbd{font:500 12px/1 var(--font-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:2px 5px;background:var(--panel);color:var(--ink)}
+
+.side{min-width:0;display:flex;flex-direction:column;gap:14px;position:sticky;top:calc(env(safe-area-inset-top, 0px) + 14px);max-height:calc(100vh - 28px);overflow:auto;padding-bottom:4px}
+@media (max-width:1000px){.side{position:static;max-height:none;overflow:visible}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.setup summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 16px;font-weight:600}
+.setup summary::-webkit-details-marker{display:none}
+.setup summary > span:first-child{white-space:nowrap}
+.setup summary .sum{font-weight:400;font-size:13px;color:var(--muted);text-align:right;min-width:0}
+.setup[open] summary .sum{display:none}
+.setup-body{display:flex;flex-direction:column;gap:14px;padding:0 16px 16px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend,.flabel{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:0;margin-bottom:7px}
+.flabel i{font-style:normal;text-transform:none;letter-spacing:0;font-weight:400}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips label{border:1px solid var(--line);border-radius:999px;padding:6px 11px;font-size:13px;cursor:pointer;background:var(--field);line-height:1.15}
+.chips input:checked + label{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.chips input:focus-visible + label{outline:2px solid var(--focus);outline-offset:2px}
+textarea{width:100%;resize:vertical;min-height:58px;border:1px solid var(--line);border-radius:9px;background:var(--field);padding:9px 11px;font-size:14px;line-height:1.4}
+.runbox{display:flex;flex-direction:column;gap:8px;padding:14px 16px}
+.runbtns{display:flex;flex-direction:column;gap:8px}
+.runnote{margin:0;font-size:13px;color:var(--muted)}
+.runnote.err{color:var(--pen)}
+.running{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start}
+.running b{display:block;font-weight:600}
+.running p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.running .t{font:500 13px/1.4 var(--font-mono);color:var(--muted);margin-left:6px}
+.pendot{width:12px;height:12px;border-radius:50%;background:var(--pen);margin-top:4px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.55);opacity:.5}}
+
+.report{padding:16px;display:flex;flex-direction:column;gap:18px}
+.report:empty{display:none}
+.r-note{margin:0;font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+.r-tag{align-self:flex-start;font:700 20px/1 var(--font-hand);color:var(--pen)}
+.grade{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.g-num{position:relative;width:118px;height:88px;display:grid;place-items:center;color:var(--pen)}
+.g-num svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.g-num path{fill:none;stroke:var(--pen);stroke-width:3;stroke-linecap:round}
+.g-num span{font:700 54px/1 var(--font-hand);font-variant-numeric:tabular-nums;position:relative}
+.g-of{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.g-of .up{color:var(--ok);font-weight:600}
+.g-of .down{color:var(--pen);font-weight:600}
+.verdict{margin:4px 0 0;font-size:16px;font-weight:600;line-height:1.35;text-wrap:pretty}
+.wait-grade{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px}
+.sec h3{margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.sec h3 .cnt{font-family:var(--font-mono);letter-spacing:0;color:var(--ink)}
+.cats{display:flex;flex-direction:column;gap:9px}
+.cat .c-top{display:grid;grid-template-columns:minmax(0,1fr) auto 26px;gap:10px;align-items:center}
+.cat .c-name{font-size:14px;font-weight:500}
+.c-bar{display:flex;gap:3px}
+.c-bar i{width:11px;height:8px;border-radius:2px;background:var(--line)}
+.cat[data-lv="low"] .c-bar i.on{background:var(--pen)}
+.cat[data-lv="mid"] .c-bar i.on{background:var(--mid)}
+.cat[data-lv="good"] .c-bar i.on{background:var(--ok)}
+.c-val{font:500 14px/1 var(--font-mono);text-align:right}
+.c-note{margin:3px 0 0;font-size:13px;color:var(--muted)}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.filter button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+.filter button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.cards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.card{border:1px solid var(--line);border-radius:11px;padding:11px 12px 12px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 10px;cursor:pointer;transition:border-color .15s, background .15s}
+.card:hover,.card.on{border-color:var(--pen)}
+.card.flash{animation:flash 1s}
+@keyframes flash{30%{background:color-mix(in srgb, var(--pen) 12%, transparent)}}
+.card .num{grid-row:span 3;width:28px;height:28px;display:grid;place-items:center;color:var(--pen);font:700 19px/1 var(--font-hand);border:2px solid var(--pen);border-radius:52% 48% 55% 45% / 48% 55% 45% 52%}
+.card.st-fixed .num{color:var(--ok);border-color:var(--ok)}
+.card b{font-weight:600;line-height:1.3}
+.card.st-fixed b{text-decoration:line-through;text-decoration-thickness:1px;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12px;color:var(--muted)}
+.pill{border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:600;border:1px solid currentColor}
+.pill.sev-high{color:var(--pen)}
+.pill.sev-mid{color:var(--mid)}
+.pill.sev-low{color:var(--muted)}
+.pill.st-fixed{color:var(--ok)}
+.pill.st-partial{color:var(--mid)}
+.pill.st-open{color:var(--pen)}
+.pill.st-pending,.pill.st-unknown{color:var(--muted);border-style:dashed}
+.card p{margin:0;font-size:13.5px;line-height:1.45}
+.card .why{color:var(--muted)}
+.card .fix span,.card .note span{font-weight:600}
+.card .why,.card .fix,.card .note{grid-column:2}
+.goods,.asks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.goods li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px}
+.goods li::before{content:"";width:12px;height:7px;border-left:2.5px solid var(--ok);border-bottom:2.5px solid var(--ok);transform:translateY(5px) rotate(-45deg)}
+.asks li{border-left:3px solid var(--pen);padding-left:10px}
+.asks b{display:block;font-weight:600}
+.asks span{color:var(--muted);font-size:13.5px}
+.out{display:flex;flex-wrap:wrap;gap:8px}
+.out .btn{flex:1 1 150px}
+.placeholder{color:var(--muted);font-size:14px;margin:0}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom, 0px) + 20px);transform:translate(-50%,20px);background:var(--accent);color:var(--on-accent);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;max-width:calc(100% - 32px);z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){
+  .mk.draw,.lbl.pop,.pendot,.card.flash{animation:none}
+  .mk.draw{stroke-dasharray:none;stroke-dashoffset:0}
+  .scan::before{animation:none;top:0;height:100%;background:rgba(227,38,27,.06)}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Красная <span class="u">ручка<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 C 40 3, 85 13, 128 7 S 182 5, 198 8"/></svg></span></h1>
+      <p>Кидаешь скрин макета, а арт-директор обводит косяки красной ручкой, ставит оценки и пишет, как поправить. Прогони так кейсы перед собесом и макеты перед отправкой клиенту.</p>
+    </div>
+    <div class="actions">
+      <button class="btn" id="b-new" type="button">Загрузить скрин</button>
+    </div>
+  </header>
+  <input type="file" id="file-new" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+  <input type="file" id="file-fix" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+
+  <main class="app">
+    <section class="stage-col" aria-label="Макет">
+      <div class="versions" id="versions" hidden></div>
+      <div class="stage" id="stage">
+        <div class="banner" id="banner" hidden><b>Пример</b><span>Лендинг выдуманный, разбор тоже. Перетащи сюда свой скрин, вставь через <kbd>Ctrl</kbd>&nbsp;<kbd>V</kbd> или <button class="linkbtn" id="b-pick" type="button">выбери файл</button>.</span></div>
+        <figure class="sheet empty" id="sheet">
+          <img id="shot" alt="Макет на разборе" hidden>
+          <svg id="ink" class="ink" aria-hidden="true"></svg>
+          <div id="labels" class="labels"></div>
+          <div class="scan" id="scan" hidden></div>
+        </figure>
+        <div class="dropveil" id="dropveil" hidden>Отпускай, разберём</div>
+      </div>
+      <div class="stage-bar">
+        <button class="btn small" id="b-marks" type="button" aria-pressed="true">Скрыть пометки</button>
+        <span class="hint">Наведи на замечание справа, и его пометка подсветится. Клавиша <kbd>M</kbd> прячет пометки, чтобы сравнить с чистым макетом.</span>
+      </div>
+    </section>
+
+    <aside class="side" aria-label="Разбор">
+      <details class="setup box" id="setup" open>
+        <summary><span>Настройки разбора</span><span class="sum" id="setup-sum"></span></summary>
+        <div class="setup-body">
+          <fieldset><legend>Что на скрине</legend><div class="chips" id="g-kind"></div></fieldset>
+          <fieldset><legend>Зачем разбор</legend><div class="chips" id="g-purpose"></div></fieldset>
+          <fieldset><legend>Тон</legend><div class="chips" id="g-tone"></div></fieldset>
+          <fieldset><legend>Глубина</legend><div class="chips" id="g-depth"></div></fieldset>
+          <div>
+            <label class="flabel" for="note">Пара слов о макете <i>(можно пропустить)</i></label>
+            <textarea id="note" rows="2" maxlength="600" placeholder="Например: лендинг студии маникюра, аудитория 25–40, главное действие запись через телеграм"></textarea>
+          </div>
+        </div>
+      </details>
+
+      <div class="runbox box" id="runbox">
+        <div class="runbtns" id="runbtns">
+          <button class="btn primary big" id="b-upload" type="button">Загрузить свой скрин</button>
+          <button class="btn big" id="b-run" type="button">Разобрать макет</button>
+        </div>
+        <div class="running" id="running" hidden>
+          <span class="pendot" aria-hidden="true"></span>
+          <div><b><span id="run-title">Арт-дир смотрит макет</span><span class="t" id="run-time">0:00</span></b><p id="run-sub">Обычно это от 20 секунд до пары минут. Пометки появятся по одной, как только он начнёт писать.</p></div>
+          <button class="btn small" id="b-stop" type="button">Стоп</button>
+        </div>
+        <p class="runnote" id="runnote" hidden></p>
+      </div>
+
+      <div class="report box" id="report"></div>
+    </aside>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (q, r = document) => r.querySelector(q);
+const $$ = (q, r = document) => [...r.querySelectorAll(q)];
+const SVGNS = 'http://www.w3.org/2000/svg';
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  if (props) for (const [k, v] of Object.entries(props)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c.nodeType ? c : String(c));
+  return el;
+}
+function sv(tag, attrs) { const el = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v); return el; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const fmt = (v) => Number.isFinite(v) ? v.toFixed(1).replace('.', ',') : '?';
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- settings ---------- */
+const OPTS = {
+  kind: [['landing', 'Лендинг'], ['app', 'Экран приложения'], ['slide', 'Слайд'], ['case', 'Кейс портфолио'], ['dash', 'Дашборд'], ['social', 'Соцсети, баннер']],
+  purpose: [['client', 'Перед клиентом'], ['portfolio', 'Портфолио и собес'], ['learn', 'Прокачаться']],
+  tone: [['soft', 'Мягко'], ['review', 'Как на ревью'], ['roast', 'Разнос']],
+  depth: [['default', 'Быстрее'], ['complex', 'Дотошно']],
+};
+const KIND_TXT = { landing: 'лендинг или страница сайта', app: 'экран мобильного или веб-приложения', slide: 'слайд презентации', case: 'кейс или страница из портфолио дизайнера', dash: 'дашборд или сложный интерфейс с данными', social: 'пост для соцсетей или рекламный баннер' };
+const PURPOSE_TXT = {
+  client: 'макет скоро уйдёт клиенту, надо поймать всё, за что будет неловко',
+  portfolio: 'макет пойдёт в портфолио, его будут смотреть нанимающие дизайнеры и арт-директора на собеседовании',
+  learn: 'автор хочет прокачаться, поэтому объясняй принципы, которые стоят за правками',
+};
+const TONE_TXT = {
+  soft: 'мягко, как наставник для начинающего дизайнера: честно, но с поддержкой, объясняй чуть подробнее',
+  review: 'прямо и по делу, как на нормальном дизайн-ревью в студии',
+  roast: 'жёстко и без реверансов, как уставший арт-директор за пять минут до дедлайна. Можно разговорные словечки и сарказм, но критикуй макет, а не автора',
+};
+const CATS = { hier: 'Иерархия', grid: 'Сетка и отступы', type: 'Типографика', color: 'Цвет и контраст', copy: 'Тексты', ux: 'Удобство' };
+const SEV = { high: 'критично', mid: 'заметно', low: 'мелочь' };
+const ST = { pending: 'проверю', fixed: 'исправлено', partial: 'частично', open: 'осталось', unknown: 'не проверено' };
+const KEY = 'krasnaya-ruchka-v1';
+const S = { kind: 'landing', purpose: 'client', tone: 'review', depth: 'complex', note: '' };
+try { const saved = JSON.parse(localStorage.getItem(KEY) || '{}'); for (const k of Object.keys(S)) if (typeof saved[k] === 'string') S[k] = saved[k]; } catch (_) { /* no storage */ }
+for (const k of Object.keys(OPTS)) if (!OPTS[k].some(([v]) => v === S[k])) S[k] = OPTS[k][0][0];
+function saveS() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (_) { /* no storage */ } }
+const label = (group, v) => (OPTS[group].find(([k]) => k === v) || [, ''])[1];
+
+function mountSetup() {
+  for (const g of Object.keys(OPTS)) {
+    const box = $('#g-' + g);
+    for (const [v, t] of OPTS[g]) {
+      const id = g + '-' + v;
+      const inp = h('input', { type: 'radio', name: g, id, value: v });
+      inp.checked = S[g] === v;
+      inp.addEventListener('change', () => { S[g] = v; saveS(); updateSetupSum(); });
+      box.append(inp, h('label', { for: id }, t));
+    }
+  }
+  const note = $('#note');
+  note.value = S.note;
+  note.addEventListener('input', () => { S.note = note.value; saveS(); });
+  updateSetupSum();
+}
+function updateSetupSum() { $('#setup-sum').textContent = [label('kind', S.kind), label('purpose', S.purpose), label('tone', S.tone)].join(' · '); }
+
+/* ---------- Claude ---------- */
+let SAMPLE;            // undefined while connecting, null when this view cannot ask Claude
+let IMG = null;        // image limits, null when images cannot be sent
+let DENIED = false;
+async function connect() {
+  if (!window.claude || !window.claude.use) { SAMPLE = null; updateRun(); return; }
+  try { SAMPLE = await window.claude.use('sample'); } catch (_) { SAMPLE = null; }
+  if (SAMPLE) {
+    try { const l = await SAMPLE.limits(); IMG = (l && l.images) || null; } catch (_) { IMG = null; }
+  }
+  updateRun();
+}
+let dlPromise = null;
+function downloadsNS() { if (!dlPromise) dlPromise = window.claude && window.claude.use ? window.claude.use('downloads').catch(() => null) : Promise.resolve(null); return dlPromise; }
+
+/* ---------- rounds ---------- */
+let ROUNDS = [];
+let EX = null;
+let view = null;
+let BUSY = false, ctl = null, tick = null, FILTER = 'all', MARKS = true;
+function mkRound(o) {
+  return Object.assign({ kind: 'review', state: 'idle', issues: [], goods: [], asks: [], score: null, prevScore: null, notes: [], drawn: new Set(), settings: null, example: false, error: '' }, o);
+}
+const lastRound = () => ROUNDS[ROUNDS.length - 1] || null;
+function nextN() { let m = 0; for (const r of ROUNDS) for (const i of r.issues) m = Math.max(m, i.n); return m + 1; }
+
+/* ---------- hand-drawn marks ---------- */
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const r1 = (v) => Math.round(v * 10) / 10;
+function curve(pts) {
+  let d = `M${r1(pts[0][0])} ${r1(pts[0][1])}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += ` C${r1(p1[0] + (p2[0] - p0[0]) / 6)} ${r1(p1[1] + (p2[1] - p0[1]) / 6)} ${r1(p2[0] - (p3[0] - p1[0]) / 6)} ${r1(p2[1] - (p3[1] - p1[1]) / 6)} ${r1(p2[0])} ${r1(p2[1])}`;
+  }
+  return d;
+}
+function ovalPath(cx, cy, rx, ry, R) {
+  const a0 = -2.6 + R() * 0.5, N = 32, turn = 1.1, pts = [];
+  for (let i = 0; i <= N; i++) {
+    const a = a0 + turn * 2 * Math.PI * i / N;
+    const k = 1 + (R() - 0.5) * 0.03 + (i / N) * 0.05;
+    pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
+  }
+  return curve(pts);
+}
+function boxPx(it, W, H) { const b = it.box; return [b[0] / 100 * W, b[1] / 100 * H, b[2] / 100 * W, b[3] / 100 * H]; }
+function markPath(it, W, H) {
+  const [x1, y1, x2, y2] = boxPx(it, W, H);
+  const R = rng(it.n * 9973 + 7);
+  const u = W / 760;
+  const J = (a) => (R() * 2 - 1) * a * u;
+  const bw = x2 - x1, bh = y2 - y1;
+  if (it.mark === 'line') {
+    const y = y2 + 4 * u, xa = x1 - 3 * u, xb = x2 + 5 * u;
+    const N = Math.max(3, Math.round(bw / (70 * u)));
+    const pts = []; for (let i = 0; i <= N; i++) pts.push([xa + (xb - xa) * i / N, y + J(1.4) - (i / N) * 2 * u]);
+    let d = curve(pts);
+    if (it.sev === 'high') { const p2 = []; for (let i = 0; i <= N; i++) p2.push([xa + 10 * u + (xb - xa - 22 * u) * i / N, y + 5 * u + J(1.2)]); d += ' ' + curve(p2); }
+    return d;
+  }
+  if (it.mark === 'oval') return ovalPath((x1 + x2) / 2, (y1 + y2) / 2, bw / 2 + 9 * u + bw * 0.05, bh / 2 + 7 * u + bh * 0.1, R);
+  const p = 6 * u, X1 = x1 - p, Y1 = y1 - p, X2 = x2 + p, Y2 = y2 + p;
+  const C = [[X1 + J(2), Y1 + J(2)], [X2 + J(2), Y1 + J(2)], [X2 + J(2), Y2 + J(2)], [X1 + J(2), Y2 + J(2)]];
+  const st = [C[0][0] + (X2 - X1) * 0.04 + Math.abs(J(2)), C[0][1] + J(1.5)];
+  const en = [C[0][0] + (X2 - X1) * (0.09 + R() * 0.05) + 6 * u, C[0][1] - 2 * u + J(1.5)];
+  const seg = (a, b) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, bow = J(3) + L * 0.008 * (R() - 0.5); return `Q${r1(mx - dy / L * bow)} ${r1(my + dx / L * bow)} ${r1(b[0])} ${r1(b[1])}`; };
+  return `M${r1(st[0])} ${r1(st[1])} ${seg(st, C[1])} ${seg(C[1], C[2])} ${seg(C[2], C[3])} ${seg(C[3], C[0])} ${seg(C[0], en)}`;
+}
+function tickPath(it, W, H) {
+  const [x1, y1, x2, y2] = boxPx(it, W, H);
+  const u = W / 760, s = clamp(Math.min(x2 - x1, y2 - y1) * 0.7, 22 * u, 46 * u);
+  const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
+  return `M${r1(cx - s * 0.55)} ${r1(cy - s * 0.02)} Q${r1(cx - s * 0.3)} ${r1(cy + s * 0.2)} ${r1(cx - s * 0.12)} ${r1(cy + s * 0.42)} Q${r1(cx + s * 0.15)} ${r1(cy - s * 0.15)} ${r1(cx + s * 0.62)} ${r1(cy - s * 0.55)}`;
+}
+
+/* ---------- stage ---------- */
+const sheet = $('#sheet'), shot = $('#shot'), ink = $('#ink'), labels = $('#labels');
+function visibleIssues(r) { return r.issues.filter((i) => FILTER === 'all' || i.sev === FILTER); }
+function sizeSheet() {
+  if (!view) return;
+  const stage = $('#stage');
+  const cs = getComputedStyle(stage);
+  const avail = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const r = view.H / view.W;
+  const capH = Math.max(520, window.innerHeight - 150);
+  let w = r <= 2.4 ? Math.min(avail, capH / r) : avail;
+  w = Math.min(w, Math.max(view.W * 1.25, 420), avail);
+  sheet.style.width = Math.round(w) + 'px';
+}
+function renderStage() {
+  const r = view;
+  sheet.classList.toggle('empty', !r);
+  shot.hidden = !r;
+  if (r && shot.getAttribute('src') !== r.src) shot.src = r.src;
+  $('#banner').hidden = !(r && r.example);
+  $('#scan').hidden = !(r && r.state === 'running');
+  sheet.classList.toggle('nomarks', !MARKS);
+  sizeSheet();
+  renderMarks();
+  renderVersions();
+}
+function renderMarks() {
+  ink.replaceChildren(); labels.replaceChildren();
+  const r = view; if (!r) return;
+  ink.setAttribute('viewBox', `0 0 ${r.W} ${r.H}`);
+  ink.setAttribute('preserveAspectRatio', 'none');
+  for (const it of visibleIssues(r)) {
+    if (!it.box || it.status === 'pending') continue;
+    const fresh = !r.drawn.has(it.n) && !reduceMotion;
+    r.drawn.add(it.n);
+    if (it.status === 'fixed') {
+      ink.append(sv('path', { d: tickPath(it, r.W, r.H), class: 'mk tick' + (fresh ? ' draw' : ''), 'data-n': it.n, pathLength: 1 }));
+      continue;
+    }
+    ink.append(sv('path', { d: markPath(it, r.W, r.H), class: `mk sev-${it.sev}${fresh ? ' draw' : ''}`, 'data-n': it.n, pathLength: 1 }));
+    const lb = h('button', { class: 'lbl' + (fresh ? ' pop' : ''), type: 'button', 'data-n': it.n, 'aria-label': `Замечание ${it.n}: ${it.title}` }, h('span', { class: 'num' }, String(it.n)), it.pen ? h('span', null, it.pen) : null);
+    lb.addEventListener('click', () => { const c = $(`.card[data-n="${it.n}"]`); if (c) { c.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); flash(c); } });
+    lb.addEventListener('mouseenter', () => setFocus(it.n));
+    lb.addEventListener('mouseleave', () => setFocus(null));
+    labels.append(lb);
+  }
+  layoutLabels();
+}
+function overlap(a, b) { const w = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), hh = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y); return w > 0 && hh > 0 ? w * hh : 0; }
+function layoutLabels() {
+  const r = view; if (!r) return;
+  const sw = sheet.clientWidth, sh = sheet.clientHeight;
+  if (!sw || !sh) return;
+  ink.style.setProperty('--k', String(r.W / sw));
+  const fs = clamp(sw / 40, 14, 23);
+  labels.style.setProperty('--fs', fs + 'px');
+  const placed = [];
+  for (const el of labels.children) {
+    const it = r.issues.find((i) => i.n === +el.dataset.n);
+    if (!it || !it.box) continue;
+    const w = el.offsetWidth, hh = el.offsetHeight, g = 7;
+    const bx1 = it.box[0] / 100 * sw, by1 = it.box[1] / 100 * sh, bx2 = it.box[2] / 100 * sw, by2 = it.box[3] / 100 * sh;
+    const slots = {
+      al: [bx1 - 4, by1 - hh - g], ar: [bx2 - w + 4, by1 - hh - g], bl: [bx1 - 4, by2 + g], br: [bx2 - w + 4, by2 + g],
+      r: [bx2 + g + 4, (by1 + by2) / 2 - hh / 2], l: [bx1 - w - g - 4, (by1 + by2) / 2 - hh / 2], in: [bx1 + 4, by1 + 4],
+    };
+    const order = it.mark === 'line' ? ['r', 'bl', 'al', 'br', 'ar', 'l', 'in'] : ['al', 'ar', 'bl', 'br', 'r', 'l', 'in'];
+    if (it.lp && slots[it.lp]) order.unshift(it.lp);
+    let best = null, bestS = Infinity;
+    order.forEach((key, i) => {
+      const [cx, cy] = slots[key];
+      const x = clamp(cx, 2, sw - w - 2), y = clamp(cy, 2, sh - hh - 2);
+      let sc = i * 14 + (Math.abs(x - cx) + Math.abs(y - cy)) * 2.5;
+      const me = { x, y, w, h: hh };
+      for (const p of placed) sc += overlap(me, p) / 6;
+      if (sc < bestS) { bestS = sc; best = me; }
+    });
+    el.style.left = best.x + 'px'; el.style.top = best.y + 'px';
+    placed.push(best);
+    it.lab = { fx: best.x / sw, fy: best.y / sh, fs: fs / sw };
+  }
+}
+function setFocus(n) {
+  sheet.classList.toggle('focus', n != null);
+  for (const el of $$('.mk, .lbl', sheet)) el.classList.toggle('on', n != null && +el.dataset.n === n);
+  for (const el of $$('.card')) el.classList.toggle('on', n != null && +el.dataset.n === n);
+}
+function flash(el) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+function renderVersions() {
+  const box = $('#versions');
+  const list = ROUNDS.length > 1 && view && !view.example ? ROUNDS : [];
+  box.hidden = !list.length;
+  box.replaceChildren(...list.map((r, i) => h('button', { type: 'button', 'aria-current': r === view ? 'true' : 'false', onclick: () => { if (r !== view) { view = r; FILTER = 'all'; renderAll(); } } }, `Версия ${i + 1}${r.score ? ' · ' + fmt(r.score.overall) : ''}`)));
+}
+
+/* ---------- report ---------- */
+function gradeSvg(seed) {
+  const R = rng(seed * 31 + 5);
+  const svg = sv('svg', { viewBox: '0 0 118 88', 'aria-hidden': 'true' });
+  svg.append(sv('path', { d: ovalPath(59, 46, 50, 34, R) }));
+  return svg;
+}
+function lvl(v) { return v <= 4 ? 'low' : v <= 6 ? 'mid' : 'good'; }
+function renderReport() {
+  const box = $('#report');
+  const r = view;
+  setFocus(null);
+  if (!r) { box.replaceChildren(); return; }
+  const out = [];
+  if (r.example) out.push(h('div', { class: 'r-tag' }, 'Пример разбора'));
+  for (const n of r.notes) out.push(h('p', { class: 'r-note' }, n));
+
+  if (r.score) {
+    const of = h('div', { class: 'g-of' }, 'из 10');
+    if (r.prevScore != null) {
+      const d = r.score.overall - r.prevScore;
+      of.append(' · было ' + fmt(r.prevScore) + ' ', h('span', { class: d >= 0 ? 'up' : 'down' }, (d >= 0 ? '+' : '−') + fmt(Math.abs(d))));
+    }
+    out.push(h('div', { class: 'grade' }, h('div', { class: 'g-num' }, gradeSvg(Math.round(r.score.overall * 10)), h('span', null, fmt(r.score.overall))), h('div', null, of, r.score.verdict ? h('p', { class: 'verdict' }, r.score.verdict) : null)));
+    const cats = Object.keys(CATS).filter((k) => Number.isFinite(r.score.cats[k]));
+    if (cats.length) {
+      out.push(h('section', { class: 'sec' }, h('h3', null, 'По категориям'), h('div', { class: 'cats' }, cats.map((k) => {
+        const v = r.score.cats[k];
+        const bar = h('span', { class: 'c-bar', 'aria-hidden': 'true' }); for (let i = 1; i <= 10; i++) bar.append(h('i', { class: i <= v ? 'on' : null }));
+        return h('div', { class: 'cat', 'data-lv': lvl(v) }, h('div', { class: 'c-top' }, h('span', { class: 'c-name' }, CATS[k]), bar, h('b', { class: 'c-val' }, String(v))), r.score.notes[k] ? h('p', { class: 'c-note' }, r.score.notes[k]) : null);
+      }))));
+    }
+  } else if (r.state === 'running') {
+    out.push(h('div', { class: 'wait-grade' }, r.issues.length ? 'Оценка будет в самом конце.' : 'Здесь появятся замечания, а потом оценка.'));
+  } else if (r.state === 'idle' && !r.issues.length) {
+    out.push(h('p', { class: 'placeholder' }, 'Тут будет разбор: оценка по шести категориям, пронумерованные замечания с тем, как их поправить, и пометки прямо на макете. Проверь настройки и жми «Разобрать макет».'));
+  }
+
+  if (r.issues.length) {
+    const counts = { all: r.issues.length, high: 0, mid: 0, low: 0 };
+    for (const i of r.issues) counts[i.sev]++;
+    const sec = h('section', { class: 'sec' }, h('h3', null, r.kind === 'check' ? 'Правки и замечания' : 'Замечания', h('span', { class: 'cnt' }, String(r.issues.length))));
+    if (r.issues.length > 3) {
+      sec.append(h('div', { class: 'filter' }, [['all', 'Все'], ['high', 'Критично'], ['mid', 'Заметно'], ['low', 'Мелочи']].filter(([k]) => k === 'all' || counts[k]).map(([k, t]) => h('button', { type: 'button', 'aria-pressed': FILTER === k ? 'true' : 'false', onclick: () => { FILTER = k; renderMarks(); renderReport(); } }, `${t} ${counts[k]}`))));
+    }
+    const ol = h('ol', { class: 'cards' });
+    for (const it of visibleIssues(r)) {
+      const st = it.status;
+      const li = h('li', { class: 'card' + (st ? ' st-' + st : ''), 'data-n': it.n, tabindex: '0' },
+        h('span', { class: 'num' }, String(it.n)),
+        h('b', null, it.title || 'Без названия'),
+        h('div', { class: 'meta' }, st ? h('span', { class: 'pill st-' + st }, ST[st]) : it.fresh ? h('span', { class: 'pill st-open' }, 'новое') : null, h('span', { class: 'pill sev-' + it.sev }, SEV[it.sev]), h('span', null, CATS[it.cat] || '')),
+        it.note ? h('p', { class: 'note' }, h('span', null, 'Сейчас: '), it.note) : null,
+        it.why && st !== 'fixed' ? h('p', { class: 'why' }, it.why) : null,
+        it.fix && st !== 'fixed' ? h('p', { class: 'fix' }, h('span', null, 'Как поправить: '), it.fix) : null);
+      li.addEventListener('mouseenter', () => setFocus(it.n));
+      li.addEventListener('mouseleave', () => setFocus(null));
+      li.addEventListener('focus', () => setFocus(it.n));
+      li.addEventListener('blur', () => setFocus(null));
+      li.addEventListener('click', () => { const lb = $(`.lbl[data-n="${it.n}"]`, sheet) || $(`.mk[data-n="${it.n}"]`, sheet); if (lb) { const rc = lb.getBoundingClientRect(); if (rc.top < 0 || rc.bottom > innerHeight) lb.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' }); setFocus(it.n); } });
+      ol.append(li);
+    }
+    sec.append(ol);
+    out.push(sec);
+  }
+  if (r.goods.length) out.push(h('section', { class: 'sec' }, h('h3', null, 'Что уже хорошо'), h('ul', { class: 'goods' }, r.goods.map((g) => h('li', null, g)))));
+  if (r.asks.length) out.push(h('section', { class: 'sec' }, h('h3', null, 'Что спросят на собесе'), h('ul', { class: 'asks' }, r.asks.map((a) => h('li', null, h('b', null, a.q), a.hint ? h('span', null, a.hint) : null)))));
+
+  if (r.state === 'done' && (r.issues.length || r.score)) {
+    const o = h('div', { class: 'out' });
+    o.append(h('button', { class: 'btn', type: 'button', onclick: exportPng }, 'Скачать разбор PNG'));
+    o.append(h('button', { class: 'btn', type: 'button', onclick: copyChecklist }, 'Скопировать чек-лист'));
+    if (!r.example && r === lastRound() && r.issues.some((i) => i.status !== 'fixed')) o.append(h('button', { class: 'btn primary', type: 'button', onclick: () => $('#file-fix').click() }, 'Проверить правки'));
+    out.push(o);
+  }
+  box.replaceChildren(...out);
+}
+
+/* ---------- run controls ---------- */
+function canAsk() {
+  if (SAMPLE === undefined) return 'Подключаюсь к Claude…';
+  if (SAMPLE === null) return 'Разбирать макеты можно, когда страница открыта в Claude. Здесь показан пример.';
+  if (DENIED) return 'Странице не разрешили обращаться к Claude. Обнови страницу, если передумал.';
+  if (!IMG) return 'В этом окне нельзя отправить картинку Claude. Открой страницу в браузере на claude.ai.';
+  return '';
+}
+function updateRun() {
+  const r = view;
+  const busy = BUSY;
+  $('#running').hidden = !busy;
+  $('#runbtns').hidden = busy;
+  const up = $('#b-upload'), run = $('#b-run');
+  const why = canAsk();
+  up.hidden = !(r && r.example) && !!r;
+  if (!r || r.example) {
+    up.className = 'btn primary big';
+    run.textContent = 'Разобрать этот пример по-настоящему';
+    run.className = 'btn big';
+  } else {
+    run.className = 'btn big' + (r.state === 'done' ? '' : ' primary');
+    run.textContent = r.kind === 'check' ? (r.state === 'done' ? 'Проверить ещё раз' : 'Проверить правки') : (r.state === 'done' ? 'Разобрать заново' : 'Разобрать макет');
+  }
+  run.disabled = !!why || !r || (r.example && !EX.blob);
+  const note = $('#runnote');
+  const msg = (r && r.error) || (why && !(SAMPLE === undefined && r && r.example) ? why : '');
+  note.hidden = !msg || busy;
+  note.textContent = msg;
+  note.classList.toggle('err', !!(r && r.error));
+}
+function renderAll() { renderStage(); renderReport(); updateRun(); }
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2800); }
+
+/* ---------- loading images ---------- */
+async function loadImage(src) { const im = new Image(); im.decoding = 'async'; im.src = src; await im.decode(); return im; }
+async function takeFile(file, mode) {
+  if (!file || !/^image\/(png|jpe?g|webp|gif)$/.test(file.type)) { toast('Нужна картинка: PNG, JPG, WebP или GIF'); return; }
+  if (BUSY) { toast('Дождись конца разбора или нажми «Стоп»'); return; }
+  const src = URL.createObjectURL(file);
+  let img;
+  try { img = await loadImage(src); } catch (_) { toast('Не получилось открыть картинку'); return; }
+  const W = img.naturalWidth, H = img.naturalHeight;
+  if (!W || !H) { toast('Не получилось открыть картинку'); return; }
+  const base = lastRound();
+  if (mode === 'fix' && base && base.state === 'done') {
+    const r = mkRound({ kind: 'check', src, img, W, H, prevScore: base.score ? base.score.overall : null });
+    r.issues = base.issues.filter((i) => i.status !== 'fixed').map((i) => ({ n: i.n, sev: i.sev, cat: i.cat, title: i.title, why: i.why, fix: i.fix, pen: i.pen, mark: i.mark, box: null, status: 'pending', note: '' }));
+    ROUNDS.push(r);
+    view = r;
+  } else {
+    if (base && base.state === 'done') toast('Это новый макет. Чтобы сверить с прошлой версией, жми «Проверить правки» под разбором.');
+    ROUNDS = [mkRound({ src, img, W, H })];
+    view = ROUNDS[0];
+  }
+  FILTER = 'all';
+  $('#setup').open = true;
+  renderAll();
+  $('#b-run').focus({ preventScroll: true });
+}
+
+/* ---------- preparing images for Claude ---------- */
+function toBlob(c, type, q) { return new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('encode'))), type, q)); }
+async function encode(c) {
+  const max = IMG ? IMG.maxInputBytes : 5e6, types = IMG ? IMG.mediaTypes : ['image/png', 'image/jpeg'];
+  if (types.includes('image/png')) { const b = await toBlob(c, 'image/png'); if (b.size < max * 0.92) return b; }
+  return toBlob(c, 'image/jpeg', 0.9);
+}
+async function rulerTile(img, W, H, y0, y1) {
+  const M = 30, th = y1 - y0;
+  const s = Math.min(1.6, Math.sqrt(1.12e6 / (W * th)));
+  const dw = Math.round(W * s), dh = Math.round(th * s);
+  const c = document.createElement('canvas'); c.width = dw + 2 * M; c.height = dh + 2 * M;
+  const x = c.getContext('2d');
+  x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, c.width, c.height);
+  x.imageSmoothingQuality = 'high';
+  x.drawImage(img, 0, y0, W, th, M, M, dw, dh);
+  x.font = '600 12px Arial, sans-serif'; x.textBaseline = 'middle';
+  x.lineWidth = 1;
+  for (let p = 0; p <= 100; p += 5) {
+    const gx = M + dw * p / 100;
+    x.strokeStyle = 'rgba(220,0,150,0.9)';
+    x.beginPath(); x.moveTo(gx, M - (p % 10 ? 4 : 8)); x.lineTo(gx, M); x.moveTo(gx, M + dh); x.lineTo(gx, M + dh + (p % 10 ? 4 : 8)); x.stroke();
+    if (p % 10 === 0) {
+      if (p > 0 && p < 100) { x.strokeStyle = 'rgba(255,0,170,0.28)'; x.beginPath(); x.moveTo(gx + 0.5, M); x.lineTo(gx + 0.5, M + dh); x.stroke(); }
+      x.fillStyle = '#B0007A'; x.textAlign = 'center';
+      x.fillText(String(p), clamp(gx, 10, c.width - 10), 10); x.fillText(String(p), clamp(gx, 10, c.width - 10), c.height - 10);
+    }
+  }
+  const span = th / H * 100, step = span < 35 ? 5 : 10;
+  for (let p = Math.ceil(y0 / H * 100 / step) * step; p * H / 100 <= y1 + 0.5; p += step) {
+    const gy = M + (p * H / 100 - y0) * s;
+    x.strokeStyle = 'rgba(220,0,150,0.9)';
+    x.beginPath(); x.moveTo(M - 8, gy); x.lineTo(M, gy); x.moveTo(M + dw, gy); x.lineTo(M + dw + 8, gy); x.stroke();
+    if (gy > M + 1 && gy < M + dh - 1) { x.strokeStyle = 'rgba(255,0,170,0.28)'; x.beginPath(); x.moveTo(M, gy + 0.5); x.lineTo(M + dw, gy + 0.5); x.stroke(); }
+    x.fillStyle = '#B0007A';
+    const ly = clamp(gy, 8, c.height - 8);
+    x.textAlign = 'right'; x.fillText(String(p), M - 10, ly);
+    x.textAlign = 'left'; x.fillText(String(p), M + dw + 10, ly);
+  }
+  return encode(c);
+}
+async function cleanCopy(img, W, H) {
+  const s = Math.min(1.6, Math.sqrt(1.15e6 / (W * H)));
+  const c = document.createElement('canvas'); c.width = Math.round(W * s); c.height = Math.round(H * s);
+  const x = c.getContext('2d'); x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, c.width, c.height); x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, c.width, c.height);
+  return encode(c);
+}
+async function prepImages(r) {
+  const maxCount = IMG ? IMG.maxCount : 1;
+  const ratio = r.H / r.W;
+  let n = 1;
+  if (ratio > 1.8) n = Math.max(1, Math.min(Math.ceil(ratio / 1.35), maxCount, 6));
+  const blobs = [];
+  for (let k = 0; k < n; k++) blobs.push(await rulerTile(r.img, r.W, r.H, Math.round(r.H * k / n), Math.round(r.H * (k + 1) / n)));
+  let clean = false;
+  if (n === 1 && maxCount >= 2) { blobs.push(await cleanCopy(r.img, r.W, r.H)); clean = true; }
+  return { blobs, n, clean };
+}
+
+/* ---------- prompts ---------- */
+function imagesText(prep) {
+  const ruler = 'по верхнему и нижнему краю подписаны проценты ширины всего макета (x), по левому и правому проценты высоты всего макета (y), тонкие розовые линии идут через каждые 10%';
+  if (prep.n > 1) return `Макет длинный, поэтому он разрезан на ${prep.n} части сверху вниз, картинки идут по порядку. На каждой части линейки: ${ruler}. Значения y считаются от высоты всего макета, а не части, поэтому бери их прямо с линейки. Линейки и розовые линии я добавил только для координат, это не часть дизайна.`;
+  if (prep.clean) return `Две картинки. Первая: макет с координатными линейками, ${ruler}. Вторая: тот же макет без линеек, дизайн оценивай по ней. Линейки и розовые линии я добавил только для координат, это не часть дизайна.`;
+  return `Одна картинка: макет с координатными линейками, ${ruler}. Линейки и розовые линии я добавил только для координат, это не часть дизайна, не оценивай их.`;
+}
+const FIELDS = `Поля:
+box: прямоугольник проблемного места [x1,y1,x2,y2] в процентах ширины и высоты всего макета, по линейкам на картинке. x1,y1 левый верхний угол, x2,y2 правый нижний. Обводи плотно конкретный элемент или группу, а не полэкрана.
+mark: "box" для блока или группы элементов, "oval" для небольшого элемента (кнопка, иконка, слово, цена), "line" для строки или абзаца текста, его подчеркнём.
+sev: "high" бросается в глаза или выглядит непрофессионально, "mid" заметит опытный дизайнер, "low" полировка.
+cat: hier иерархия и акценты, grid сетка, выравнивание и отступы, type типографика, color цвет и контраст, copy тексты и микрокопирайтинг, ux удобство и понятность.
+pen: пометка красной ручкой прямо на макете, 1-3 слова, как арт-директор пишет на распечатке: "мелко", "не по сетке", "воздух!", "кто главный?".
+title: суть проблемы одной короткой фразой.
+why: почему это мешает, 1-2 предложения.
+fix: что конкретно сделать, с цифрами там, где это уместно: кегль, отступ, цвет, контраст.
+Оценки: overall от 1 до 10 с одним знаком после точки, оценки категорий целые от 1 до 10, в notes по одной короткой фразе на категорию, verdict одна фраза с общим выводом.`;
+const STYLE = `Как писать: по-русски, живо и коротко, без канцелярита и воды. Не используй длинное тире (—), вместо него запятая, двоеточие или обычный дефис. Без вводных вроде «важно отметить». Если в макете русский текст, проверь русскую типографику: висячие предлоги, кавычки-ёлочки, пробелы в числах и перед знаком рубля.`;
+const SCORE_LINE = '{"t":"score","overall":6.5,"verdict":"...","cats":{"hier":6,"grid":5,"type":7,"color":8,"copy":6,"ux":6},"notes":{"hier":"...","grid":"...","type":"...","color":"...","copy":"...","ux":"..."}}';
+const ISSUE_LINE = '{"t":"issue","box":[12,8,47,21],"mark":"box","sev":"high","cat":"hier","pen":"кто главный?","title":"...","why":"...","fix":"..."}';
+function headText(set) {
+  return `Что на скрине: ${KIND_TXT[set.kind]}.\nЗачем ревью: ${PURPOSE_TXT[set.purpose]}.\n${set.note.trim() ? 'Комментарий автора: ' + set.note.trim().slice(0, 600) + '\n' : ''}Тон: ${TONE_TXT[set.tone]}.`;
+}
+function reviewPrompt(set, prep) {
+  const asks = set.purpose === 'portfolio';
+  return `Ты арт-директор с большим опытом в продуктовом и веб-дизайне. Тебе прислали макет на ревью.
+
+${headText(set)}
+
+Картинки. ${imagesText(prep)}
+
+Задача: найди конкретные проблемы, которые видно на этом макете, от 5 до 10 штук, самые важные первыми. Каждая проблема привязана к месту на макете. Не придумывай то, чего не видно, и не повторяй одну проблему дважды. Потом отметь 2-4 вещи, которые сделаны хорошо.${asks ? ' Макет пойдёт в портфолио, поэтому добавь 3 вопроса, которые нанимающий дизайнер задаст про этот макет на собеседовании, и к каждому короткую подсказку, как ответить сильно.' : ''}
+
+Формат ответа: только строки JSON, по одному объекту на строку, без markdown и без текста вокруг. Сначала все проблемы, потом сильные стороны, ${asks ? 'потом вопросы, ' : ''}последней строкой оценки. Пример:
+${ISSUE_LINE}
+{"t":"good","text":"..."}
+${asks ? '{"t":"ask","q":"...","hint":"..."}\n' : ''}${SCORE_LINE}
+
+${FIELDS}
+
+${STYLE}`;
+}
+function checkPrompt(set, r, prep) {
+  const list = r.issues.map((i) => `${i.n}. [${SEV[i.sev]}] ${i.title}. Что советовал: ${i.fix}`).join('\n');
+  return `Ты арт-директор с большим опытом в продуктовом и веб-дизайне. Раньше ты разобрал прошлую версию этого макета и нашёл такие проблемы:
+${list}
+
+Автор прислал исправленную версию.
+${headText(set)}
+
+Картинки. ${imagesText(prep)}
+
+Задача: проверь каждую старую проблему на новой версии. Потом найди новые проблемы, если они появились или раньше ты их пропустил, не больше 5. Отметь 1-3 вещи, которые стали лучше или сделаны хорошо. В конце поставь новые оценки за эту версию.
+
+Формат ответа: только строки JSON, по одному объекту на строку, без markdown и без текста вокруг. Сначала проверки по всем старым номерам, потом новые проблемы, потом сильные стороны, последней строкой оценки. Пример:
+{"t":"check","n":3,"status":"fixed","box":[12,8,47,21],"note":"..."}
+{"t":"check","n":5,"status":"open","box":[40,52,88,60],"mark":"line","pen":"всё ещё мелко","note":"..."}
+${ISSUE_LINE}
+{"t":"good","text":"..."}
+${SCORE_LINE}
+
+Поля check: n номер старой проблемы; status "fixed" исправлено, "partial" стало лучше, но не до конца, "open" не исправлено; box где это место на новой версии, в процентах по линейкам; mark и pen как у проблем, только для partial и open; note одна фраза: что изменилось или что ещё сделать.
+
+${FIELDS}
+
+${STYLE}`;
+}
+
+/* ---------- parsing the streamed answer ---------- */
+const str = (v, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+function normBox(b) {
+  if (!Array.isArray(b) || b.length < 4) return null;
+  let [x1, y1, x2, y2] = b.slice(0, 4).map(Number);
+  if (![x1, y1, x2, y2].every(Number.isFinite)) return null;
+  if (Math.max(x1, y1, x2, y2) <= 1.0001) { x1 *= 100; y1 *= 100; x2 *= 100; y2 *= 100; }
+  if (x2 < x1) [x1, x2] = [x2, x1];
+  if (y2 < y1) [y1, y2] = [y2, y1];
+  x1 = clamp(x1, 0, 100); x2 = clamp(x2, 0, 100); y1 = clamp(y1, 0, 100); y2 = clamp(y2, 0, 100);
+  if (x2 - x1 < 0.6) { x1 = Math.max(0, x1 - 0.3); x2 = Math.min(100, x2 + 0.3); }
+  if (y2 - y1 < 0.4) { y1 = Math.max(0, y1 - 0.2); y2 = Math.min(100, y2 + 0.2); }
+  return [x1, y1, x2, y2];
+}
+const normMark = (m) => (m === 'oval' || m === 'line' ? m : 'box');
+const normSev = (s) => (s === 'high' || s === 'low' ? s : 'mid');
+const normCat = (c) => (CATS[c] ? c : 'ux');
+function normScore(o) {
+  const cats = {}, notes = {};
+  const src = o.cats && typeof o.cats === 'object' ? o.cats : {};
+  const ns = o.notes && typeof o.notes === 'object' ? o.notes : {};
+  for (const k of Object.keys(CATS)) { const v = Math.round(Number(src[k])); if (Number.isFinite(v)) cats[k] = clamp(v, 1, 10); notes[k] = str(ns[k], 200); }
+  let overall = Number(o.overall);
+  const vals = Object.values(cats);
+  if (!Number.isFinite(overall)) overall = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : NaN;
+  if (!Number.isFinite(overall)) return null;
+  return { overall: Math.round(clamp(overall, 1, 10) * 10) / 10, verdict: str(o.verdict, 300), cats, notes };
+}
+function accept(r, o) {
+  if (!o || typeof o !== 'object') return false;
+  const t = o.t || o.type;
+  if (t === 'issue') {
+    const it = { n: nextN(), box: normBox(o.box), mark: normMark(o.mark), sev: normSev(o.sev), cat: normCat(o.cat), pen: str(o.pen, 40), title: str(o.title, 200), why: str(o.why), fix: str(o.fix) };
+    if (!it.title && !it.why) return false;
+    if (r.kind === 'check') it.fresh = true;
+    r.issues.push(it);
+  } else if (t === 'good') {
+    const g = str(o.text, 300); if (!g) return false; r.goods.push(g);
+  } else if (t === 'ask') {
+    const q = str(o.q, 300); if (!q) return false; r.asks.push({ q, hint: str(o.hint, 400) });
+  } else if (t === 'check') {
+    const it = r.issues.find((i) => i.n === Number(o.n) && i.status === 'pending');
+    if (!it) return false;
+    it.status = ['fixed', 'partial', 'open'].includes(o.status) ? o.status : 'open';
+    it.box = normBox(o.box);
+    if (o.mark) it.mark = normMark(o.mark);
+    const pen = str(o.pen, 40); if (pen) it.pen = pen;
+    it.note = str(o.note, 300);
+  } else if (t === 'score') {
+    const sc = normScore(o); if (!sc) return false; r.score = sc;
+  } else return false;
+  return true;
+}
+function lineParser(onObj) {
+  let buf = '', all = '', count = 0;
+  const eat = (line) => {
+    line = line.trim();
+    if (!line || line.startsWith('```')) return;
+    const a = line.indexOf('{'), b = line.lastIndexOf('}');
+    if (a < 0 || b < a) return;
+    try { if (onObj(JSON.parse(line.slice(a, b + 1)))) count++; } catch (_) { /* skip a broken line */ }
+  };
+  return {
+    push(d) { all += d; buf += d; const parts = buf.split('\n'); buf = parts.pop(); parts.forEach(eat); },
+    end() {
+      if (buf) eat(buf); buf = '';
+      if (count) return count;
+      // The answer came as one JSON value instead of lines: read it whole.
+      let body = all.trim().replace(/^```[a-z]*\s*/i, '').replace(/```\s*$/, '');
+      try {
+        const v = JSON.parse(body);
+        const arr = Array.isArray(v) ? v : [...(v.issues || []).map((x) => ({ t: 'issue', ...x })), ...(v.goods || []).map((x) => ({ t: 'good', text: typeof x === 'string' ? x : x.text })), ...(v.score ? [{ t: 'score', ...v.score }] : [])];
+        for (const o of arr) if (onObj(o)) count++;
+      } catch (_) { /* nothing usable */ }
+      return count;
+    },
+  };
+}
+
+/* ---------- running a review ---------- */
+let rafPending = false;
+function scheduleRender() { if (rafPending) return; rafPending = true; requestAnimationFrame(() => { rafPending = false; renderMarks(); renderReport(); }); }
+const ERR = {
+  not_granted: 'Странице не разрешили обращаться к Claude, поэтому разбор здесь недоступен. Обнови страницу, если передумал.',
+  sampling_disabled: 'Claude недоступен для этого аккаунта, разбор не получится.',
+  not_declared: 'Разбор отключён в этой версии страницы.',
+  capability_disabled: 'Разбор недоступен в этом окне.',
+  capability_removed: 'Это приложение Claude слишком старое для разбора. Открой страницу в браузере.',
+  images_unavailable: 'В этом окне нельзя отправить картинку Claude. Открой страницу в браузере на claude.ai.',
+  rate_limited: 'Слишком много запросов подряд или закончился лимит. Подожди немного и запусти ещё раз.',
+  session_expired: 'Сессия Claude истекла. Войди заново и запусти разбор.',
+  image_rejected: 'Claude не принял картинку. Попробуй PNG или JPG поменьше.',
+  refused: 'Claude отказался разбирать эту картинку. Попробуй другой скрин.',
+  empty_completion: 'Ответ пришёл пустым. Запусти разбор ещё раз.',
+  prompt_too_large: 'Слишком длинная заметка к макету, сократи её.',
+};
+async function run() {
+  if (BUSY || canAsk()) return;
+  let r = view;
+  if (!r) return;
+  if (r.example) {
+    if (!EX.blob) return;
+    ROUNDS = [mkRound({ src: EX.src, img: EX.img, W: EX.W, H: EX.H })];
+    r = view = ROUNDS[0];
+  }
+  r.settings = { ...S };
+  r.error = ''; r.notes = []; r.goods = []; r.asks = []; r.score = null; r.drawn = new Set();
+  if (r.kind === 'check') {
+    const base = ROUNDS[ROUNDS.indexOf(r) - 1];
+    r.issues = (base ? base.issues.filter((i) => i.status !== 'fixed') : []).map((i) => ({ n: i.n, sev: i.sev, cat: i.cat, title: i.title, why: i.why, fix: i.fix, pen: i.pen, mark: i.mark, box: null, status: 'pending', note: '' }));
+  } else r.issues = [];
+  r.state = 'running';
+  FILTER = 'all';
+  BUSY = true;
+  ctl = new AbortController();
+  $('#setup').open = false;
+  const t0 = Date.now();
+  $('#run-title').textContent = r.kind === 'check' ? 'Арт-дир сверяет правки' : 'Арт-дир смотрит макет';
+  $('#run-sub').textContent = 'Обычно это от 20 секунд до пары минут. Пометки появятся по одной, как только он начнёт писать.';
+  const tickFn = () => { const s = Math.round((Date.now() - t0) / 1000); $('#run-time').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  tickFn(); tick = setInterval(tickFn, 1000);
+  renderAll();
+  let started = false;
+  const parser = lineParser((o) => { const ok = accept(r, o); if (ok && view === r) scheduleRender(); return ok; });
+  try {
+    const prep = await prepImages(r);
+    const prompt = r.kind === 'check' ? checkPrompt(r.settings, r, prep) : reviewPrompt(r.settings, prep);
+    const res = await SAMPLE(prompt, {
+      images: prep.blobs, modelTier: r.settings.depth, signal: ctl.signal, cache: false,
+      onText: ({ delta }) => { if (!started) { started = true; $('#run-title').textContent = 'Пишет разбор'; $('#run-sub').textContent = 'Пометки появляются по мере того, как он пишет.'; } parser.push(delta); },
+    });
+    const n = parser.end();
+    if (!n) r.error = 'Не получилось прочитать ответ. Запусти разбор ещё раз.';
+    if (res && res.truncated) r.notes.push('Ответ обрезался по длине, так что часть замечаний могла не поместиться.');
+    if (res && res.modelTierApplied && res.modelTierApplied !== r.settings.depth && r.settings.depth === 'complex') r.notes.push('Дотошный режим недоступен на этом тарифе, разбор сделала модель попроще.');
+    if (!r.score && n) r.notes.push('Оценку он поставить не успел. Можно запустить разбор ещё раз.');
+  } catch (e) {
+    parser.end();
+    const code = e && e.code;
+    if (code === 'cancelled') r.notes.push('Разбор остановлен. Что успело прийти, осталось на экране.');
+    else if (code === 'refused') { r.issues = r.issues.filter((i) => i.status); r.goods = []; r.asks = []; r.score = null; r.error = ERR.refused; }
+    else if (code === 'not_granted') { DENIED = true; r.error = ERR.not_granted; }
+    else if (code === 'images_unavailable') { IMG = null; r.error = ERR.images_unavailable; }
+    else if (code === 'invalid_request' || code === 'transform_error' || code === 'queue_overflow') r.error = 'Что-то не так со страницей, разбор не отправился. Обнови её и попробуй ещё раз.';
+    else r.error = ERR[code] || (e && e.text ? 'Связь оборвалась на середине. То, что успело прийти, осталось на экране, разбор можно запустить заново.' : 'Не получилось связаться с Claude. Попробуй ещё раз чуть позже.');
+  } finally {
+    clearInterval(tick);
+    BUSY = false; ctl = null;
+    for (const i of r.issues) if (i.status === 'pending') i.status = 'unknown';
+    r.state = 'done';
+    if (!r.issues.length && !r.score) r.state = 'idle';
+    if (view === r) renderAll(); else updateRun();
+  }
+}
+
+/* ---------- export ---------- */
+async function saveFile(name, blob) {
+  const ns = await downloadsNS();
+  if (ns) {
+    try { await ns.save({ filename: name, data: blob }); toast('Сохранено: ' + name); }
+    catch (e) { if (e && e.code === 'declined') return; toast(e && e.code === 'rate_limited' ? 'Окно сохранения уже открыто' : 'Не получилось сохранить файл здесь'); }
+    return;
+  }
+  if (window.claude) { toast('В этом окне скачивание недоступно'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  toast('Скачано: ' + name);
+}
+function checklistText(r) {
+  const L = [];
+  L.push(r.score ? `Разбор макета: ${fmt(r.score.overall)} из 10` : 'Разбор макета');
+  if (r.score && r.score.verdict) L.push(r.score.verdict);
+  if (r.prevScore != null) L.push(`Прошлая версия: ${fmt(r.prevScore)}`);
+  L.push('');
+  const fixed = r.issues.filter((i) => i.status === 'fixed'), rest = r.issues.filter((i) => i.status !== 'fixed');
+  if (rest.length) {
+    L.push('Что поправить:');
+    for (const i of rest) {
+      L.push(`[ ] ${i.n}. ${i.title} (${SEV[i.sev]}${i.status && i.status !== 'open' ? ', ' + ST[i.status] : ''})`);
+      if (i.note) L.push(`    Сейчас: ${i.note}`);
+      if (i.why) L.push(`    Почему: ${i.why}`);
+      if (i.fix) L.push(`    Как: ${i.fix}`);
+    }
+    L.push('');
+  }
+  if (fixed.length) { L.push('Уже исправлено:'); for (const i of fixed) L.push(`[x] ${i.n}. ${i.title}`); L.push(''); }
+  if (r.goods.length) { L.push('Что хорошо:'); for (const g of r.goods) L.push('+ ' + g); L.push(''); }
+  if (r.asks.length) { L.push('Что спросят на собесе:'); for (const a of r.asks) { L.push('? ' + a.q); if (a.hint) L.push('    ' + a.hint); } }
+  return L.join('\n').trim() + '\n';
+}
+async function copyChecklist() {
+  const text = checklistText(view);
+  try { await navigator.clipboard.writeText(text); toast('Чек-лист скопирован'); return; } catch (_) { /* fall through */ }
+  const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (_) { /* ignore */ }
+  ta.remove();
+  if (ok) toast('Чек-лист скопирован'); else saveFile('razbor-maketa.txt', new Blob([text], { type: 'text/plain' }));
+}
+function wrapLines(x, text, maxW) {
+  const out = [];
+  for (const para of String(text).split('\n')) {
+    let cur = '';
+    for (const w of para.split(/\s+/).filter(Boolean)) {
+      const t = cur ? cur + ' ' + w : w;
+      if (x.measureText(t).width > maxW && cur) { out.push(cur); cur = w; } else cur = t;
+    }
+    out.push(cur);
+  }
+  return out;
+}
+function paraH(x, text, px, py, maxW, font, color, lh, draw) {
+  x.font = font; const L = wrapLines(x, text, maxW);
+  if (draw) { x.fillStyle = color; L.forEach((l, i) => x.fillText(l, px, py + i * lh)); }
+  return L.length * lh;
+}
+const PC = { ink: '#15181D', muted: '#59616C', pen: '#D3241A', ok: '#1B8047', mid: '#9C5D00', line: '#D3D8DF', high: '#D3241A', low: '#59616C' };
+const FONT = (w, s) => `${w} ${s}px "Golos Text", sans-serif`;
+function capTitle(x, text, X, y, draw) { if (draw) { x.font = FONT(600, 13); x.fillStyle = PC.muted; x.fillText(text, X, y); } return 28; }
+function drawSummary(x, r, X, Y, w, draw) {
+  x.textBaseline = 'top';
+  let y = Y;
+  if (!r.score) return 0;
+  if (draw) {
+    x.save(); x.translate(X, y); x.strokeStyle = PC.pen; x.lineWidth = 3.2; x.lineCap = 'round';
+    x.stroke(new Path2D(ovalPath(80, 58, 66, 44, rng(Math.round(r.score.overall * 10) * 31 + 5)))); x.restore();
+    x.fillStyle = PC.pen; x.font = '700 74px Caveat, cursive'; x.textAlign = 'center'; x.fillText(fmt(r.score.overall), X + 80, y + 22); x.textAlign = 'left';
+  }
+  const gx = X + 186; let gy = y + 14;
+  gy += paraH(x, 'из 10' + (r.prevScore != null ? ' · было ' + fmt(r.prevScore) : ''), gx, gy, w - 186, FONT(500, 16), PC.muted, 22, draw) + 6;
+  if (r.score.verdict) gy += paraH(x, r.score.verdict, gx, gy, w - 186, FONT(600, 20), PC.ink, 27, draw);
+  y = Math.max(y + 124, gy) + 26;
+  const keys = Object.keys(CATS).filter((k) => Number.isFinite(r.score.cats[k]));
+  if (keys.length) {
+    y += capTitle(x, 'ПО КАТЕГОРИЯМ', X, y, draw);
+    for (const k of keys) {
+      const v = r.score.cats[k], c = v <= 4 ? PC.pen : v <= 6 ? PC.mid : PC.ok;
+      if (draw) {
+        x.font = FONT(500, 17); x.fillStyle = PC.ink; x.fillText(CATS[k], X, y);
+        for (let i = 0; i < 10; i++) { x.fillStyle = i < v ? c : '#DDE1E6'; x.fillRect(X + 200 + i * 22, y + 5, 18, 10); }
+        x.font = '500 17px "JetBrains Mono", monospace'; x.fillStyle = PC.ink; x.textAlign = 'right'; x.fillText(String(v), X + w, y); x.textAlign = 'left';
+      }
+      y += 26;
+      if (r.score.notes[k]) y += paraH(x, r.score.notes[k], X, y, w, FONT(400, 14), PC.muted, 19, draw);
+      y += 10;
+    }
+  }
+  return y - Y;
+}
+function drawIssue(x, it, X, Y, w, draw) {
+  x.textBaseline = 'top';
+  const fixed = it.status === 'fixed', col = fixed ? PC.ok : PC.pen;
+  if (draw) {
+    x.save(); x.strokeStyle = col; x.lineWidth = 2.2; x.stroke(new Path2D(ovalPath(X + 15, Y + 14, 15, 14, rng(it.n * 17 + 3)))); x.restore();
+    x.fillStyle = col; x.font = '700 22px Caveat, cursive'; x.textAlign = 'center'; x.fillText(String(it.n), X + 15, Y + 3); x.textAlign = 'left';
+  }
+  const tx = X + 44, tw = w - 44;
+  let y = Y;
+  y += paraH(x, it.title, tx, y, tw, FONT(600, 18), fixed ? PC.muted : PC.ink, 25, draw) + 3;
+  const meta = [it.status ? ST[it.status] : it.fresh ? 'новое' : '', SEV[it.sev], CATS[it.cat]].filter(Boolean).join(' · ');
+  y += paraH(x, meta, tx, y, tw, FONT(600, 13), fixed ? PC.ok : (PC[it.sev] || PC.muted), 18, draw) + 6;
+  if (it.note) y += paraH(x, 'Сейчас: ' + it.note, tx, y, tw, FONT(400, 15), PC.ink, 21, draw) + 4;
+  if (!fixed && it.why) y += paraH(x, it.why, tx, y, tw, FONT(400, 15), PC.muted, 21, draw) + 4;
+  if (!fixed && it.fix) y += paraH(x, 'Как поправить: ' + it.fix, tx, y, tw, FONT(400, 15), PC.ink, 21, draw);
+  return Math.max(y - Y, 30);
+}
+function drawGoods(x, r, X, Y, w, draw) {
+  let y = Y + capTitle(x, 'ЧТО УЖЕ ХОРОШО', X, Y, draw);
+  for (const g of r.goods) {
+    if (draw) { x.save(); x.strokeStyle = PC.ok; x.lineWidth = 2.6; x.lineCap = 'round'; x.beginPath(); x.moveTo(X + 1, y + 10); x.lineTo(X + 6, y + 15); x.lineTo(X + 15, y + 4); x.stroke(); x.restore(); }
+    y += paraH(x, g, X + 26, y, w - 26, FONT(400, 15), PC.ink, 21, draw) + 8;
+  }
+  return y - Y - 8;
+}
+function drawAsks(x, r, X, Y, w, draw) {
+  let y = Y + capTitle(x, 'ЧТО СПРОСЯТ НА СОБЕСЕ', X, Y, draw);
+  for (const a of r.asks) {
+    const y0 = y;
+    y += paraH(x, a.q, X + 14, y, w - 14, FONT(600, 16), PC.ink, 22, draw) + 2;
+    if (a.hint) y += paraH(x, a.hint, X + 14, y, w - 14, FONT(400, 14), PC.muted, 20, draw);
+    if (draw) { x.fillStyle = PC.pen; x.fillRect(X, y0 + 2, 3, y - y0 - 2); }
+    y += 14;
+  }
+  return y - Y - 14;
+}
+async function exportPng() {
+  const r = view; if (!r || !r.img) return;
+  toast('Собираю картинку…');
+  try { await Promise.all(['700 40px Caveat', '400 16px "Golos Text"', '600 16px "Golos Text"', '500 16px "JetBrains Mono"'].map((f) => document.fonts.load(f))); } catch (_) { /* fallback fonts */ }
+  const W = r.W, H = r.H, ratio = H / W;
+  let IW = Math.min(W, 1400);
+  if (ratio > 1.5 && ratio <= 2.4) IW = Math.min(IW, 820);
+  const minW = ratio > 1.5 ? 600 : 760;
+  if (IW < minW) IW = Math.min(minW, W * 2);
+  let IH = H * IW / W; if (IH > 9000) { IH = 9000; IW = W * IH / H; }
+  IW = Math.round(IW); IH = Math.round(IH);
+  const P = 56, RW = 720, TOP = 116, GAP = 26, RX = P + IW + P;
+  const cw = RX + RW + P;
+  const m = document.createElement('canvas').getContext('2d');
+  const sumH = drawSummary(m, r, 0, 0, RW, false);
+  // Blocks flow down the right column while there is room beside the image, the rest goes into columns under it.
+  const blocks = [];
+  if (r.issues.length) blocks.push({ head: `ЗАМЕЧАНИЯ · ${r.issues.length}` });
+  for (const it of r.issues) blocks.push({ fn: (x, X, y, w, d) => drawIssue(x, it, X, y, w, d) });
+  if (r.goods.length) blocks.push({ fn: (x, X, y, w, d) => drawGoods(x, r, X, y, w, d), sep: true });
+  if (r.asks.length) blocks.push({ fn: (x, X, y, w, d) => drawAsks(x, r, X, y, w, d), sep: true });
+  const bh = (b, w) => (b.head ? 28 : b.fn(m, 0, 0, w, false)) + (b.head ? 2 : GAP) + (b.sep ? 12 : 0);
+  const right = [];
+  let ry = TOP + (sumH ? sumH + 34 : 0), i = 0;
+  while (i < blocks.length && ry + bh(blocks[i], RW) <= TOP + IH) { right.push([blocks[i], ry]); ry += bh(blocks[i], RW); i++; }
+  if (i > 0 && blocks[i - 1] && blocks[i - 1].head) { right.pop(); i--; }
+  const rest = blocks.slice(i);
+  const cols = cw >= 1900 ? 3 : 2, colW = (cw - P * (cols + 1)) / cols;
+  const by0 = Math.max(TOP + IH, ry) + 64;
+  const colY = Array(cols).fill(by0);
+  const placed = [];
+  for (const b of rest) {
+    if (b.head) { const y = Math.max(...colY); placed.push([b, P, y, cw - 2 * P]); colY.fill(y + 30); continue; }
+    let c = 0; for (let k = 1; k < cols; k++) if (colY[k] < colY[c] - 1) c = k;
+    placed.push([b, P + c * (colW + P), colY[c], colW]); colY[c] += bh(b, colW);
+  }
+  const ch = Math.round(Math.max(TOP + IH + P, ry + P - GAP, rest.length ? Math.max(...colY) + P - GAP : 0, TOP + sumH + P));
+  const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+  const x = c.getContext('2d');
+  x.fillStyle = '#F1F3F5'; x.fillRect(0, 0, cw, ch);
+  x.textBaseline = 'top';
+  x.fillStyle = PC.ink; x.font = FONT(700, 30); x.fillText('Красная ручка', P, 44);
+  const ux0 = P + x.measureText('Красная ').width, ux1 = P + x.measureText('Красная ручка').width + 4;
+  x.save(); x.strokeStyle = PC.pen; x.lineWidth = 3; x.lineCap = 'round'; x.beginPath(); x.moveTo(ux0, 82); x.bezierCurveTo(ux0 + (ux1 - ux0) * 0.3, 76, ux0 + (ux1 - ux0) * 0.6, 86, ux1, 79); x.stroke(); x.restore();
+  x.font = FONT(400, 16); x.fillStyle = PC.muted;
+  const date = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  x.textAlign = 'right'; x.fillText(`Разбор макета · ${date}`, cw - P, 54); x.textAlign = 'left';
+  x.save(); x.shadowColor = 'rgba(15,20,28,0.18)'; x.shadowBlur = 26; x.shadowOffsetY = 8; x.fillStyle = '#FFFFFF'; x.fillRect(P, TOP, IW, IH); x.restore();
+  x.drawImage(r.img, P, TOP, IW, IH);
+  const s = IW / W, lw = IW / 760;
+  x.save(); x.translate(P, TOP); x.scale(s, s); x.lineCap = 'round'; x.lineJoin = 'round';
+  for (const it of r.issues) {
+    if (!it.box || it.status === 'pending') continue;
+    if (it.status === 'fixed') { x.strokeStyle = '#15A049'; x.lineWidth = 3.6 * lw / s; x.stroke(new Path2D(tickPath(it, W, H))); continue; }
+    x.strokeStyle = '#E3261B'; x.lineWidth = (it.sev === 'high' ? 3.2 : it.sev === 'low' ? 2.1 : 2.6) * lw / s;
+    x.stroke(new Path2D(markPath(it, W, H)));
+  }
+  x.restore();
+  for (const it of r.issues) {
+    if (!it.box || it.status === 'pending' || it.status === 'fixed') continue;
+    const lab = it.lab || { fx: it.box[0] / 100, fy: Math.max(0, it.box[1] / 100 - 0.04), fs: 1 / 40 };
+    const fs = Math.max(15, lab.fs * IW), lx = P + lab.fx * IW, ly = TOP + lab.fy * IH;
+    x.font = `700 ${fs}px Caveat, cursive`;
+    const numW = fs * 1.32, gap = fs * 0.28, tw = it.pen ? x.measureText(it.pen).width : 0;
+    const bw = fs * 0.18 + numW + (it.pen ? gap + tw : 0) + fs * 0.45, bhh = fs * 1.6;
+    x.save(); x.translate(lx, ly); x.rotate(-1.4 * Math.PI / 180);
+    x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 4; x.shadowOffsetY = 1; x.fillStyle = '#FFFFFF';
+    x.beginPath(); if (x.roundRect) x.roundRect(0, 0, bw, bhh, fs * 0.35); else x.rect(0, 0, bw, bhh); x.fill();
+    x.shadowColor = 'transparent';
+    x.strokeStyle = '#D2221A'; x.lineWidth = Math.max(1.5, fs * 0.1);
+    x.beginPath(); x.ellipse(fs * 0.18 + numW / 2, bhh / 2, numW / 2, numW / 2 * 0.96, 0, 0, Math.PI * 2); x.stroke();
+    x.fillStyle = '#D2221A'; x.textBaseline = 'middle';
+    x.font = `700 ${fs * 0.86}px Caveat, cursive`; x.textAlign = 'center'; x.fillText(String(it.n), fs * 0.18 + numW / 2, bhh / 2 + fs * 0.04);
+    x.font = `700 ${fs}px Caveat, cursive`; x.textAlign = 'left'; if (it.pen) x.fillText(it.pen, fs * 0.18 + numW + gap, bhh / 2 + fs * 0.04);
+    x.restore();
+  }
+  x.textBaseline = 'top';
+  drawSummary(x, r, RX, TOP, RW, true);
+  for (const [b, y] of right) { if (b.head) capTitle(x, b.head, RX, y, true); else b.fn(x, RX, y + (b.sep ? 12 : 0), RW, true); }
+  for (const [b, X, y, w] of placed) { if (b.head) capTitle(x, b.head, X, y, true); else b.fn(x, X, y + (b.sep ? 12 : 0), w, true); }
+  let blob;
+  try { blob = await toBlob(c, 'image/png'); } catch (_) { toast('Не получилось собрать картинку'); return; }
+  saveFile(r.example ? 'krasnaya-ruchka-primer.png' : 'razbor-maketa.png', blob);
+}
+
+/* ---------- example ---------- */
+function exampleSvg() {
+  const t = (x, y, size, txt, o = {}) => `<text x="${x}" y="${y}" font-size="${size}"${o.w ? ` font-weight="${o.w}"` : ''} fill="${o.c || '#14172B'}"${o.a ? ` text-anchor="${o.a}"` : ''}${o.f ? ` font-family="${o.f}"` : ''}${o.i ? ' font-style="italic"' : ''}>${txt}</text>`;
+  let kan = '';
+  [[772, 3], [952, 2], [1132, 1]].forEach(([cx, n], ci) => {
+    kan += `<rect x="${cx}" y="162" width="88" height="12" rx="6" fill="#C9D5F3"/>`;
+    for (let i = 0; i < n; i++) {
+      const y = 190 + i * 84;
+      kan += `<rect x="${cx}" y="${y}" width="156" height="70" rx="12" fill="#FFFFFF"/><rect x="${cx + 14}" y="${y + 16}" width="${96 - i * 14}" height="9" rx="4.5" fill="#DDE3EE"/><rect x="${cx + 14}" y="${y + 34}" width="64" height="9" rx="4.5" fill="#E8ECF3"/><circle cx="${cx + 134}" cy="${y + 50}" r="9" fill="${['#FFB27A', '#8FB0FF', '#9BE0B5'][(i + ci) % 3]}"/>`;
+    }
+  });
+  kan += '<rect x="772" y="462" width="516" height="56" rx="12" fill="#FFFFFF"/><rect x="792" y="484" width="300" height="12" rx="6" fill="#E8ECF3"/><rect x="792" y="484" width="196" height="12" rx="6" fill="#2F6BFF"/><text x="1268" y="496" font-size="15" font-weight="700" fill="#14172B" text-anchor="end">65%</text>';
+  const card = (x, pad, icon, title, tf, lines) => `<rect x="${x}" y="684" width="380" height="256" rx="16" fill="#F5F6F9"/><rect x="${x + pad}" y="${684 + pad}" width="48" height="48" rx="12" fill="${icon}"/>${tf}${lines.map((l, i) => t(x + pad, 684 + pad + 128 + i * 24, 16, l, { c: '#5B6275' })).join('')}`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1120" viewBox="0 0 1440 1120">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9F0FF"/><stop offset="1" stop-color="#F6EDFF"/></linearGradient></defs>
+<rect width="1440" height="1120" fill="#FFFFFF"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<rect x="64" y="30" width="28" height="28" rx="8" fill="#2F6BFF"/>${t(102, 52, 24, 'тасклайн', { w: 700 })}
+${t(520, 50, 16, 'Продукт', { c: '#3A3F55' })}${t(626, 54, 16, 'Цены', { c: '#3A3F55' })}${t(738, 50, 16, 'Для команд', { c: '#3A3F55' })}${t(906, 50, 16, 'Блог', { c: '#3A3F55' })}
+<rect x="1100" y="25" width="112" height="40" rx="6" fill="none" stroke="#2F6BFF" stroke-width="1.5"/>${t(1156, 51, 16, 'Войти', { c: '#2F6BFF', a: 'middle' })}
+<rect x="1228" y="23" width="148" height="44" rx="22" fill="#2F6BFF"/>${t(1302, 51, 16, 'Попробовать', { c: '#FFFFFF', a: 'middle', w: 700 })}
+<rect x="0" y="88" width="1440" height="1" fill="#ECEEF2"/>
+${t(120, 214, 48, 'Планируйте задачи', { w: 700 })}${t(120, 270, 48, 'вместе с командой', { w: 700 })}
+${t(120, 324, 40, 'Без хаоса в чатах', { c: '#8E94A6' })}
+${t(120, 374, 17, 'Тасклайн помогает распределять задачи, следить за сроками', { c: '#C3C8D1' })}${t(120, 400, 17, 'и не терять важное в бесконечных переписках.', { c: '#C3C8D1' })}
+<rect x="120" y="436" width="210" height="56" rx="8" fill="#2F6BFF"/>${t(225, 470, 18, 'Нажмите здесь', { c: '#FFFFFF', a: 'middle', w: 700 })}
+<rect x="346" y="436" width="210" height="56" rx="8" fill="#FF8A3D"/>${t(451, 470, 18, 'Узнать больше', { c: '#FFFFFF', a: 'middle', w: 700 })}
+${t(120, 534, 14, 'Уже 1 200 команд · 4,9 в каталоге', { c: '#8E94A6' })}
+<rect x="740" y="130" width="580" height="420" rx="24" fill="url(#g)"/>${kan}
+${t(120, 650, 30, 'Почему выбирают нас', { w: 700 })}
+${card(120, 32, '#DCE6FF', 'Все задачи', t(152, 808, 22, 'Все задачи', { w: 700 }), ['Все задачи команды в', 'одном месте, без потерь.'])}
+${card(530, 20, '#FFE3D1', '', t(550, 794, 26, 'Сроки под контролем', { f: 'Georgia, serif', i: true }), ['Напоминания приходят заранее,', 'а не в последний момент.'])}
+${card(940, 46, '#DDF5E6', '', t(986, 822, 22, 'Отчёты за минуту', { w: 700 }), ['Еженедельный "отчёт" для', 'руководителя одним кликом.'])}
+<rect x="120" y="990" width="1200" height="96" rx="16" fill="#14172B"/>${t(160, 1047, 26, 'Всего 1990р в месяц за всю команду', { c: '#FFFFFF', w: 700 })}
+<rect x="1124" y="1012" width="168" height="52" rx="26" fill="#2A2F4A"/>${t(1208, 1045, 17, 'Подключить', { c: '#7F86A3', a: 'middle' })}
+</g></svg>`;
+}
+async function buildExample() {
+  const svg = exampleSvg();
+  const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  let img = await loadImage(url), src = url, blob = null;
+  try {
+    const c = document.createElement('canvas'); c.width = 1440; c.height = 1120;
+    c.getContext('2d').drawImage(img, 0, 0);
+    blob = await toBlob(c, 'image/png');
+    src = URL.createObjectURL(blob);
+    img = await loadImage(src);
+  } catch (_) { blob = null; src = url; img = await loadImage(url); }
+  const P = (x1, y1, x2, y2) => [x1 / 14.4, y1 / 11.2, x2 / 14.4, y2 / 11.2];
+  const I = (box, mark, sev, cat, pen, ...rest) => { const lp = rest.length > 3 ? rest.shift() : undefined; const [title, why, fix] = rest; return { box, mark, sev, cat, pen, lp, title, why, fix }; };
+  const issues = [
+    I(P(112, 168, 580, 334), 'box', 'high', 'hier', 'кто главный?', 'Подзаголовок почти догнал заголовок', '48 и 40 пикселей читаются как один уровень, глазу не за что зацепиться первым. Серый подзаголовок ещё и спорит с абзацем ниже.', 'Заголовок оставь 48, подзаголовок опусти до 22 и сделай тёмно-серым #3A3F55. Тогда появится понятная ступенька.'),
+    I(P(120, 358, 594, 404), 'line', 'high', 'color', 'не читается', 'Основной текст почти не видно', '#C3C8D1 на белом даёт контраст около 1,7:1. Для текста нужно хотя бы 4,5:1, иначе абзац просто пропустят.', 'Возьми #5B6275, это примерно 6:1. Кегль 17 можно оставить.'),
+    I(P(120, 436, 556, 492), 'oval', 'mid', 'hier', 'две главные?', 'Две главные кнопки спорят друг с другом', 'Синяя и оранжевая одного размера и веса, непонятно, что нажимать. «Нажмите здесь» к тому же не говорит, что будет после клика.', 'Главную оставь синей и назови по действию: «Попробовать бесплатно». Вторую сделай кнопкой с обводкой или ссылкой.'),
+    I(P(1124, 1012, 1292, 1064), 'oval', 'mid', 'color', 'где кнопка?', 'Кнопку в подвале не видно', 'Тёмно-синяя кнопка на почти чёрной плашке и серый текст на ней. Это последнее целевое действие на странице, и оно теряется.', 'Сделай кнопку белой с тёмным текстом или фирменной синей #2F6BFF.'),
+    I(P(116, 680, 1324, 944), 'box', 'mid', 'grid', 'отступы пляшут', 'ar', 'У карточек разные внутренние отступы', 'Иконки стоят на 20, 32 и 46 px от края, заголовки на разной высоте. Ряд выглядит кривым даже без линейки.', 'Один отступ на все три карточки, например 32, и общая вертикаль для иконки, заголовка и текста.'),
+    I(P(548, 770, 804, 802), 'oval', 'mid', 'type', 'чужой шрифт', 'Один заголовок набран другим шрифтом', 'Курсивная антиква есть только во второй карточке. Со стороны это выглядит как ошибка вёрстки.', 'Набери тем же гротеском 22 px bold, что и соседние заголовки.'),
+    I(P(58, 26, 222, 62), 'box', 'mid', 'grid', 'мимо сетки', 'bl', 'Логотип и контент стоят на разных вертикалях', 'Лого начинается с 64 px, а весь контент со 120. Шапка выглядит прилепленной отдельно от страницы.', 'Поставь всё в один контейнер: либо лого на 120, либо контент на 64.'),
+    I(P(152, 834, 320, 850), 'line', 'low', 'type', 'висячее «в»', 'Висячий предлог и прямые кавычки', 'Строка в первой карточке заканчивается на «в». В третьей кавычки прямые, "отчёт" вместо «ёлочек».', 'Неразрывный пробел после коротких предлогов и «ёлочки» во всём тексте.'),
+    I(P(158, 1024, 316, 1054), 'oval', 'low', 'copy', '1 990 ₽', 'Цена записана небрежно', '«1990р» без пробела и с буквой вместо знака рубля выглядит как опечатка, причём ровно там, где решают про деньги.', 'Пиши «1 990 ₽» с неразрывными пробелами.'),
+    I(P(518, 36, 946, 58), 'line', 'low', 'grid', 'шаг разный', 'Пункты меню стоят с разным шагом', 'Расстояния между пунктами разные, а «Цены» сидят на 4 px ниже соседей.', 'Одинаковый gap 32 px и выравнивание по базовой линии.'),
+  ];
+  issues.forEach((it, i) => { it.n = i + 1; });
+  EX = mkRound({
+    example: true, state: 'done', src, img, blob, W: 1440, H: 1120, issues,
+    goods: ['Блоки идут в логичном порядке, страницу легко пролистать за десять секунд.', 'Иллюстрация с канбаном сразу объясняет продукт без слов.', 'Карточки преимуществ одного размера, ряд легко сканировать.'],
+    asks: [
+      { q: 'Почему на первом экране две кнопки одного веса?', hint: 'Скажи, какое действие главное для бизнеса, и как бы ты проверил выбор, например A/B-тестом.' },
+      { q: 'По какой сетке собран лендинг?', hint: 'Назови колонки, поля и шаг отступов. Если сетки не было, так и скажи и покажи, как пересобрал.' },
+      { q: 'Как ты проверял читаемость текста?', hint: 'Контраст по WCAG и просмотр на реальном телефоне, лучше на улице.' },
+    ],
+    score: {
+      overall: 5.0, verdict: 'Структура живая, но первый экран кричит всем сразу, а сетка расползается. Пара вечеров правок, и будет крепкая работа.',
+      cats: { hier: 5, grid: 4, type: 6, color: 4, copy: 5, ux: 6 },
+      notes: { hier: 'Заголовок, подзаголовок и две кнопки тянут внимание одновременно.', grid: 'Лого, первый экран и карточки стоят на разных линиях.', type: 'Шрифт один, кроме случайной антиквы, кегли в целом нормальные.', color: 'Палитра приятная, но в двух местах контраст ниже нормы.', copy: 'Оффер понятный, кнопки и цена написаны наспех.', ux: 'Путь понятный, но целевое действие в подвале теряется.' },
+    },
+  });
+}
+
+/* ---------- wiring ---------- */
+function bind() {
+  $('#b-new').addEventListener('click', () => $('#file-new').click());
+  $('#b-upload').addEventListener('click', () => $('#file-new').click());
+  $('#b-pick').addEventListener('click', () => $('#file-new').click());
+  $('#file-new').addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; takeFile(f, 'new'); });
+  $('#file-fix').addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; takeFile(f, 'fix'); });
+  $('#b-run').addEventListener('click', run);
+  $('#b-stop').addEventListener('click', () => { if (ctl) ctl.abort(); });
+  const toggleMarks = () => { MARKS = !MARKS; const b = $('#b-marks'); b.setAttribute('aria-pressed', String(MARKS)); b.textContent = MARKS ? 'Скрыть пометки' : 'Показать пометки'; sheet.classList.toggle('nomarks', !MARKS); };
+  $('#b-marks').addEventListener('click', toggleMarks);
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, textarea, [contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'm' || e.key === 'M' || e.key === 'ь' || e.key === 'Ь') { e.preventDefault(); toggleMarks(); }
+  });
+  document.addEventListener('paste', (e) => {
+    if (e.target.closest('textarea, input')) return;
+    const item = [...(e.clipboardData ? e.clipboardData.items : [])].find((i) => i.kind === 'file' && i.type.startsWith('image/'));
+    if (item) { e.preventDefault(); takeFile(item.getAsFile(), 'new'); }
+  });
+  const veil = $('#dropveil'); let depth = 0;
+  const hasFiles = (e) => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+  document.addEventListener('dragenter', (e) => { if (!hasFiles(e)) return; depth++; veil.hidden = false; });
+  document.addEventListener('dragleave', () => { depth = Math.max(0, depth - 1); if (!depth) veil.hidden = true; });
+  document.addEventListener('dragover', (e) => { if (hasFiles(e)) e.preventDefault(); });
+  document.addEventListener('drop', (e) => { if (!hasFiles(e)) return; e.preventDefault(); depth = 0; veil.hidden = true; const f = [...e.dataTransfer.files].find((x) => x.type.startsWith('image/')); if (f) takeFile(f, 'new'); else toast('Нужна картинка: PNG, JPG, WebP или GIF'); });
+  let rz;
+  const ro = new ResizeObserver(() => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { sizeSheet(); layoutLabels(); }); });
+  ro.observe($('#stage'));
+  window.addEventListener('resize', () => { sizeSheet(); layoutLabels(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutLabels);
+}
+
+mountSetup();
+bind();
+updateRun();
+connect();
+buildExample().then(() => { if (!view) { view = EX; $('#setup').open = false; renderAll(); } }).catch(() => { renderAll(); });
+})();
+</script>
